@@ -1,47 +1,48 @@
-APPLICAZIONE SPRINGBOOTREST
+APPLICAZIONE SPRINGBOOT-REST-JWT
 
-Applicazione didattica in SpringBoot che espone http rest GET e POST con due differenti configurazioni di SpringSecurity che poi vedremo.
-L'applicazione espone due controller rest che gestiscono la CRUD di compagnie ed impiegati (CompanyController, EmployeeController).
-Il backend salva le entita' su un db (nel nostro caso OracleXE) per cui sono presenti gli script di creazione dello user e di popolamento iniziale
-dell'anagrafica per due differenti db, test e produzione (i test junit hanno i files di properties che mappano lo user di test) 
+Educational application in SpringBoot that exposes http rest GET and POST with two different SpringSecurity configurations that we will see later.
+The application exposes two rest controllers that manage the CRUD of companies and employees entities (CompanyController, EmployeeController).
+The backend saves entities on a database (in our case OracleXE) for which the db creation and initial population scripts are present
+for two different users, test user and production user (the junit tests have the properties files that map  test user).
 
-Nell'applicazione SpringBoot:
+In the SpringBoot application:
 
-- e' stato disabilitato il servizio Cross-Origin Resource Sharing perche' avrebbe bloccato le richieste http di tipo POST
+- the Cross-Origin Resource Sharing service has been disabled because it would have blocked POST type HTTP requests
+- DTO validation on POST-type rests has been added, i.e.:
+- @NotEmpty and @NotNull annotations on the CompanyDto and EmployeeDto dtos
+- @Valid annotation on the rest method parameter
+- we define ControllerAdvices that manage a series of exceptions thrown by the rest Controllers and which will be re-thrown to the rest client (classes: ControllerNotFoundAdvice, UserControllerAdvice)
 
-- e' stata aggiunta la validazione del dto sulle rest di tipo POST, ossia:
-	- annotazioni @NotEmpty e @NotNull sui dto CompanyDto e EmployeeDto
-	- annotazione @Valid sul parametro del metodo rest
-	
-- sono stati definiti i ControllerAdvice che gestiscono una serie di eccezioni lanciate dai Controller rest e che verranno rilanciate al client rest (classi: ControllerNotFoundAdvice, UserControllerAdvice)
+Some rest url examples:
+
+- curl to request complete company records: curl http://localhost:8092/springBootRest/companies
+- curl to request company record with id=1: curl http://localhost:8092/springBootRest/companies/1
+- curl to request complete employee record: curl http://localhost:8092/springBootRest/employees
+- curl curl to request employee records with id=2: curl http://localhost:8092/springBootRest/employees/2
+
+Regarding Junit test of rest services (get and post):
+
+- a specific SoapUI project has been released: springBootRestClient-soapui-project.xml
+
+- a test java class has been written for both services (only for CompanyService) and controllers (CompanyController, EmployeeController). Both test classes performr CRUDs.
+
+- on controller tests the annotation used was:
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = {SpringBootApp.class})
+
+   This annotation launches SpringBootApp including rest services on the port configured in the properties file
+   and therefore allows you to invoke the rest services from the test class using the RestTemplate factory and the getForObject methods for rest GET and postForObject for the rest POST (really in the case of JWT configuration the exchange method is used because we have to pass the request with a header containing the valorized properties)
 
 
-Alcuni esempi riguardo ai servizi rest:
+Security configuration
+Let's see the part of the application that concerns security (which is certainly the most interesting).
+Two different SpringSecurity configurations have been implemented which are alternatives:
 
-- curl per richiedere anagrafica completa aziende: curl http://localhost:8092/springBootRest/companies
-- curl per richiedere anagrafica azienda con id=1: curl http://localhost:8092/springBootRest/companies/1
-- curl per richiedere anagrafica completa impiegati: curl http://localhost:8092/springBootRest/employees
-- curl per richiedere anagrafica impiegato con id=2: curl http://localhost:8092/springBootRest/employees/2
+- basic configuration: any user is authorized to access the URLs of the rest exposed by the application (CompanyController, EmployeeController).
+- JWT configuration: carries out Authentication and Authorization by implementing the OAuth 2.0 JWT (Json Web Token) standard which provides a validity token with a fixed expiry time.
 
-Riguardo ai test di un client rest sui servizi rest esposti (gete e post):
-
-- e' stato rilasciato l'apposito progetto SoapUI: springBootRestClient-soapui-project.xml
-
-- sono state scritte le classi java di test sia per i service (solo per CompanyService) che per i controller (CompanyController, EmployeeController)
-
-- sui test dei controller e' stata usata l'annotazione:
-	@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = {SpringBootApp.class})
-  Questa annotazione lancia SpringBootApp compresi i servizi rest sulla porta configurata nel file di properties
-  e permette quindi di invocare dalla classe di test i servizi rest usando la factory RestTemplate ed i metodi getForObject per le GET e postForObject per le POST
-
-Vediamo la parte dell'applicazione che riguarda la sicurezza (che e' certamente la piu' interessante)
-Sono state implementate due differenti configurazioni di SpringSecurity che sono alternative:
-
-- configurazione base: qualunque utente e' autorizzato all'accesso sulle url delle rest esposte dall'applicazione (CompanyController, EmployeeController)
-- configurazione JWT: effettua Autentication ed Authorization implementando il protocollo JWT (Json Web Token) che prevede il rilascio di un token di validita' (con scadenza prefissata)
-
-L'abilitazione della configurazione e' operata dalla proprieta jwtSecurity definita nelle properties dell'applicazione (spring.security.jwt).
-Vediamo la classe di configurazione dell'applicazione WebSecurityConfigurerAdapter:
+Enabling the configuration is operated by the jwtSecurity property defined in the application properties (application.properties, property: spring.security.jwt).
+Let's see the WebSecurityConfigurerAdapter SpringBoot configuration class:
 
 
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
@@ -98,57 +99,42 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 }
 
 
-La configurazione che implementa JWT prevede una rest di logon aperta che implementa la fase di Autentication:
+The configuration that implements JWT includes an open logon rest url that implements the Authentication phase (class: UserController):
 
-- verifica le credenziali passate nell'header della POST di logon
-- recupera i ruoli assegnati all'utente
-- recupera le permission legate ai ruoli
-- genera e restituisce un token di validita' (token JWT, che contiene le permissions cifrate legate al ruolo dell'utente) con una scadenza temporale prefissata (letta dal file di properties dell'applicazione)
+- verify the credentials passed in the logon POST header
+- retrieves the roles assigned to the user
+- retrieves permissions linked to roles
+- generates and returns a validity token (JWT token, which contains the encrypted permissions of the user's role) with a fixed expiration time (read from the application properties file)
 
-Il token dovra' essere passato nell'header della request sulle chiamate alle rest protette (di CompanyController e EmployeeController), creando e valorizzando la proprieta' 'Authorization' con il token
-restituito dalla rest di logon.
+The token must be passed in the header of request calls to the protected rest urls (CompanyController,  EmployeeController), creating and enhancing the <Authorization> property with the token
+returned from the logon rest.
 
-La fase di Authorization e' gestita dal filtro JWTAuthorizationFilter inserito nella filter chain che opera nel seguente modo:
+The Authorization phase is managed by the JWTAuthorizationFilter filter inserted in the filter chain which operates in the following way:
 
-- intercetta le url delle rest protette e verifica la presenza del token (proprieta 'Authorization' nell'header della request)
-- verifica la validita' del token e ne estrae il Claim;
-- estrae dal Claim la lista delle permission ed abilita l'accesso all'url se le permission del token comprendono le permission previste per quell'url.
-  Ad esempio l'url della rest get:
-       http://localhost:8092/springBootRest/companies
-  prevede la permission: 
-       PermissionEnum.AUTH_COMPANY_READ 
-  come configurato in WebSecurityConfigurerAdapter:
-       .antMatchers(HttpMethod.GET,"/companies/**").hasAuthority(PermissionEnum.AUTH_COMPANY_READ.name())
-  quindi tra le permission estratte dal token deve essere presente PermissionEnum.AUTH_COMPANY_READ, in caso contrario il filtro restituira: 404 Access Forbidden
-  
-Come si diceva, la gestione di autenticazione/autorizzazione impiega il protocollo standard JSON Web Token (JWT, see https://jwt.io/).
-Il processo di autenticazione/autorizzazione e' descritto nell'articolo su Softtek:
+- intercepts the URLs of the protected rests and checks the presence of the token (extracts the value of the <Authorization> property in the request header and checks its format)
+- verifies the validity of the token and extracts the Claim;
+- extracts the list of permissions from the Claim and enables access to the URL if the token's permissions include the permissions expected for that URL.
+
+   For example the rest url:
+
+        http://localhost:8092/springBootRest/companies
+
+   provides permission:
+
+        PermissionEnum.AUTH_COMPANY_READ
+
+   as configured in WebSecurityConfigurerAdapter:
+
+        .antMatchers(HttpMethod.GET,"/companies/**").hasAuthority(PermissionEnum.AUTH_COMPANY_READ.name())
+
+   therefore, PermissionEnum.AUTH_COMPANY_READ must be present among the permissions encrypted in the token, otherwise the filter will return: 404 Access Forbidden
+
+As mentioned, the authentication/authorization management uses the standard protocol JSON Web Token (JWT, see https://jwt.io/).
+The authentication/authorization process is described in the Softtek article:
+
 Token-based API authentication with Spring and JWT
-L'articolo prevede:
-- un authentication server che verifica le credenziali ed autentica il client rilasciando un token di validita' con una scadenza temporale prefissata (token JWT)
-- un authorization server che per ogni richiesta protetta accetta il token e conferma se il client ha i permessi per accedere a quella risorsa
 
+The protocol includes:
 
-
-ALTRE APPLICAZIONI
-
-GsmcHsmAuto: applicazione desktop per lanciare le istanze dell'hsm ed impostare lo stato operational
-
-hsmRemoteControl: applicazione in SpringBoot che espone http rest GET per lanciare le istanze dell'hsm ed impostare lo stato operational (1)
-
-Nota: e' rimasto aperto il problema di caricare in Sikuli i file .PNG che servono per individurae le immagini sullo schermo
-
-curl "http://192.168.255.11:8092/hsmRemoteControl/startHsm"
-curl "http://192.168.255.11:8092/hsmRemoteControl/setHsmOperational"
-curl "http://192.168.255.11:8092/hsmRemoteControl/stoptHsm"
-
-Nuova macchina virtuale:
-
-Nome macchina virtuale: test_dev-vm
-Hostname: test-vm01 (visibile dalla mia postazione)
-IP: 172.16.0.10 (visibile dalla mia postazione)
-Credenziali: Administrator/1q2w3e4r..
-
-Per condividere dati c'e' il folder tmp condiviso, ossia basta fare dalla mia postazione su explorer:
-
-\\test-vm01\tmp
+- an authentication server that verifies the credentials and authenticates the client by issuing a validity token with a fixed time limit (JWT token)
+- an authorization server which accepts the token for each protected request and confirms whether the client has permission to access that resource.
