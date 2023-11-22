@@ -14,7 +14,7 @@ import static org.junit.Assert.fail;
 
 public class Logon
 {
-    protected static String URL_REST_LOGON = "http://localhost:8092/springBootRest/logon";
+    protected static String URL_REST_LOGON = "http://localhost:8094/springBootRest/logon";
 
     // Authorization property of request header
     protected static String AUTHORIZATION_PROPERTY = "Authorization";

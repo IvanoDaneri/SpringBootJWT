@@ -1,4 +1,4 @@
-package spring.ganimede.model;
+package spring.ganimede.old_model;
 
 public enum SimpleEmployeeRole {
     OPERAIO,

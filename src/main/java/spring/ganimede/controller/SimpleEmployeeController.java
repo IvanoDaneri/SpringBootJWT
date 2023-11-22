@@ -1,8 +1,8 @@
 package spring.ganimede.controller;
 
 import spring.ganimede.dao.EmployeeNotFoundException;
-import spring.ganimede.model.SimpleEmployeeRepository;
-import spring.ganimede.model.SimpleEmployee;
+import spring.ganimede.old_model.SimpleEmployeeRepository;
+import spring.ganimede.old_model.SimpleEmployee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

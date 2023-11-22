@@ -1,4 +1,4 @@
-package spring.ganimede.model;
+package spring.ganimede.old_model;
 
 import spring.ganimede.dao.EmployeeNotValidException;
 

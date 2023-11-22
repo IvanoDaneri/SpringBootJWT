@@ -29,9 +29,9 @@ import static org.junit.Assert.fail;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CompanyControllerTest extends Logon
 {
-    private static String URL_REST_FIND_ALL_COMPANIES = "http://localhost:8092/springBootRest/companies";
-    private static String URL_REST_FIND_COMPANY_BY_CODE = "http://localhost:8092/springBootRest/companies/findByCode";
-    private static String URL_REST_ADD_COMPANY = "http://localhost:8092/springBootRest/companies/addCompany";
+    private static String URL_REST_FIND_ALL_COMPANIES = "http://localhost:8094/springBootRest/companies";
+    private static String URL_REST_FIND_COMPANY_BY_CODE = "http://localhost:8094/springBootRest/companies/findByCode";
+    private static String URL_REST_ADD_COMPANY = "http://localhost:8094/springBootRest/companies/addCompany";
 
     private Gson gson = new Gson();
 
@@ -97,39 +97,6 @@ public class CompanyControllerTest extends Logon
         }
     }
 
-    private CompanyDto findByCode(String companyCode) throws AssertionError
-    {
-        String url = URL_REST_FIND_COMPANY_BY_CODE + "/" + companyCode;
-
-        try
-        {
-            if(jwtSecurity)
-            {
-                RestTemplate restTemplate = new RestTemplate();
-                // Set JWT token in Authorization property of request header
-                HttpEntity<Void> request = getRequest();
-                ResponseEntity<CompanyDto> responseFromId = restTemplate.exchange(url, HttpMethod.GET, request, CompanyDto.class);
-                return responseFromId.getBody();
-            }
-            else
-            {
-                RestTemplate restTemplate = new RestTemplate();
-                CompanyDto result = restTemplate.getForObject(url, CompanyDto.class);
-                return result;
-            }
-        }
-        catch (RestClientException e)
-        {
-            String msg = String.format("Error in calling rest for url: [%s], cause: [%s]", url, e.getMessage());
-            throw new AssertionError(msg);
-        }
-        catch (Exception e)
-        {
-            String msg = String.format("Error in creating rest client for url: [%s], cause: [%s]", url, e.getMessage());
-            throw new AssertionError(msg);
-        }
-    }
-
     @Test
     public void test3_addCompany()
     {
@@ -187,6 +154,41 @@ public class CompanyControllerTest extends Logon
             throw new AssertionError(msg);
         }
     }
+
+
+    private CompanyDto findByCode(String companyCode) throws AssertionError
+    {
+        String url = URL_REST_FIND_COMPANY_BY_CODE + "/" + companyCode;
+
+        try
+        {
+            if(jwtSecurity)
+            {
+                RestTemplate restTemplate = new RestTemplate();
+                // Set JWT token in Authorization property of request header
+                HttpEntity<Void> request = getRequest();
+                ResponseEntity<CompanyDto> responseFromId = restTemplate.exchange(url, HttpMethod.GET, request, CompanyDto.class);
+                return responseFromId.getBody();
+            }
+            else
+            {
+                RestTemplate restTemplate = new RestTemplate();
+                CompanyDto result = restTemplate.getForObject(url, CompanyDto.class);
+                return result;
+            }
+        }
+        catch (RestClientException e)
+        {
+            String msg = String.format("Error in calling rest for url: [%s], cause: [%s]", url, e.getMessage());
+            throw new AssertionError(msg);
+        }
+        catch (Exception e)
+        {
+            String msg = String.format("Error in creating rest client for url: [%s], cause: [%s]", url, e.getMessage());
+            throw new AssertionError(msg);
+        }
+    }
+
 
     // This method allows to un-marshall a json structure with a root list
     // (json structure must be mapped to a java List<>)

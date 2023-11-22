@@ -5,6 +5,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import spring.ganimede.logger.AppLogger;
+import spring.ganimede.logger.AppLoggerService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 
 public class JWTAuthorizationFilter extends OncePerRequestFilter
 {
+    private AppLogger logger = AppLoggerService.getLogger(JWTAuthorizationFilter.class.getName());
+
     private final String AUTHORIZATION_PROPERTY = "Authorization";
     private final String AUTHORITIES = "authorities";
     private final String EMPTY_STRING = "";
@@ -29,6 +33,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
     {
+        logger.info("JWT filter - Processing request ...");
+
         try
         {
             if(checkJWTToken(request, response))
@@ -50,9 +56,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter
 
             // Method must come back to filter chain
             filterChain.doFilter(request, response);
+            logger.info("JWT filter - Request processed");
         }
         catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e)
         {
+            logger.info("JWT filter - Access forbidden");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
         }

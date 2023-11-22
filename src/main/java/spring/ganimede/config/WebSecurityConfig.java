@@ -1,7 +1,7 @@
 package spring.ganimede.config;
 
 import spring.ganimede.security.JWTAuthorizationFilter;
-import spring.ganimede.security.Permission;
+import spring.ganimede.security.entity.PermissionEnum;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -32,10 +32,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
         {
             http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                     .authorizeRequests()
-                    .antMatchers(HttpMethod.GET,"/companies/**").hasAuthority(Permission.AUTH_COMPANY_READ.name())      // CompanyController GET must have AUTH_COMPANY_READ permission
-                    .antMatchers(HttpMethod.POST,"/companies/**").hasAuthority(Permission.AUTH_COMPANY_ADD.name())      // CompanyController POST must have AUTH_COMPANY_ADD permission
-                    .antMatchers(HttpMethod.GET,"/employees/**").hasAuthority(Permission.AUTH_EMPLOYEE_READ.name())     // EmployeeController GET must have AUTH_EMPLOYEE_READ permission
-                    .antMatchers(HttpMethod.POST,"/employees/**").hasAuthority(Permission.AUTH_EMPLOYEE_ADD.name())     // EmployeeController POST must have AUTH_EMPLOYEE_ADD permission
+                    .antMatchers(HttpMethod.GET,"/companies/**").hasAuthority(PermissionEnum.AUTH_COMPANY_READ.name())      // CompanyController GET must have AUTH_COMPANY_READ permission
+                    .antMatchers(HttpMethod.POST,"/companies/**").hasAuthority(PermissionEnum.AUTH_COMPANY_ADD.name())      // CompanyController POST must have AUTH_COMPANY_ADD permission
+                    .antMatchers(HttpMethod.GET,"/employees/**").hasAuthority(PermissionEnum.AUTH_EMPLOYEE_READ.name())     // EmployeeController GET must have AUTH_EMPLOYEE_READ permission
+                    .antMatchers(HttpMethod.POST,"/employees/**").hasAuthority(PermissionEnum.AUTH_EMPLOYEE_ADD.name())     // EmployeeController POST must have AUTH_EMPLOYEE_ADD permission
                     .antMatchers(HttpMethod.POST, "/logon").permitAll()                                                 // Permit logon url to everyone to pass credentials and get JWT token
                     .requestMatchers(PROTECTED_URLS)                                                                               // These are urls protected by JWTAuthorizationFilter
                     .authenticated()
