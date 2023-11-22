@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 // This test inserts users and roles in TEST_SPRING_DB
-// To insert users and roles in SPRING_DB (production db) use <users_for_spring_db.sql> (script generated exporting data from TEST_SPRING_DB tables)
+// To insert users and roles in SPRING_DB (production db) use <insert_user_in_test_db.sql> (script generated exporting data from TEST_SPRING_DB tables)
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {SpringBootApp.class})
 @TestPropertySource(locations = "classpath:test.oracle.persistence.properties")
