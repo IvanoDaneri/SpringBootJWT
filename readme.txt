@@ -1,4 +1,5 @@
-APPLICAZIONE SPRINGBOOT-REST-JWT
+SPRINGBOOT-REST-JWT APP 1.0
+---------------------------
 
 Educational application in SpringBoot that exposes http rest GET and POST with two different SpringSecurity configurations that we will see later.
 The application exposes two rest controllers that manage the CRUD of companies and employees entities (CompanyController, EmployeeController).
@@ -33,8 +34,22 @@ Regarding Junit test of rest services (get and post):
    This annotation launches SpringBootApp including rest services on the port configured in the properties file
    and therefore allows you to invoke the rest services from the test class using the RestTemplate factory and the getForObject methods for rest GET and postForObject for the rest POST (really in the case of JWT configuration the exchange method is used because we have to pass the request with a header containing the valorized properties)
 
+Provisioning phase:
+
+- before starting the application you must execute db script in this order:
+
+    - create_user.sql (and create_test_user.sql for test environment)
+    - init_db.sql (and init_test_db.sql for test environment)
+    - init_security_db.sql (and init_security_test_db.sql for test environment)
+    - run Junit class: UserServiceTest.java to insert users in test db. Please, to
+      insert users in production db, open test.application.properties and modify
+      db properties as here:
+      spring.datasource.username=test_spring_db -> spring.datasource.username=spring_db
+      spring.datasource.password=test_spring_db -> spring.datasource.password=spring_db
+
 
 Security configuration
+----------------------
 Let's see the part of the application that concerns security (which is certainly the most interesting).
 Two different SpringSecurity configurations have been implemented which are alternatives:
 
