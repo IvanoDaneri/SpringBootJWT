@@ -24,6 +24,8 @@ Some rest url examples:
 Regarding Junit test of rest services (get and post):
 
 - a specific SoapUI project has been released: springBootRestClient-soapui-project.xml
+    - a rest client pass credentials to rest Logon to get valid JWT token from SpringBoot app
+    - protected rests can be called using token
 
 - a test java class has been written for both services (only for CompanyService) and controllers (CompanyController, EmployeeController). Both test classes performr CRUDs.
 
