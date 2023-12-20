@@ -1,5 +1,4 @@
 # Default ignored files
 **/.idea
 **/target
-
-/SpringBootJWT.log
+**/log

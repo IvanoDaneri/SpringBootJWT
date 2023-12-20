@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  test-spring-boot-jwt:
+    image: spring-boot-jwt
+    ports:
+      - "8092:8092"
+    depends_on:
+      - test-oracle-xe
+
+  test-oracle-xe:
+    image: gvenzl/oracle-xe
+    ports:
+      - "8091:8091"
+      - "1521:1521"
+    environment:
+      - ORACLE_PASSWORD=1q2w3e4r
+    volumes:
+      - my-oracle-data:/opt/oracle/oradata
+volumes:
+  my-oracle-data:
+    external: true
+    name: my-oracle-data
