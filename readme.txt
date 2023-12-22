@@ -189,5 +189,5 @@ Script .bat in docker folder allows to:
     - crate db container (2.run_db.bat)
     - initialize db (3.init_db.bat)
 
-Once db is persisted on data volume, db container can be removed.
+Once db initialization is completed (and persisted on data volume), db container can be removed.
 Final, we can launch Docker Compose with docker-compose.dev.yml and all it works!
