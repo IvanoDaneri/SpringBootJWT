@@ -15,8 +15,8 @@ services:
     environment:
       - ORACLE_PASSWORD=1q2w3e4r
     volumes:
-      - my-oracle-data:/opt/oracle/oradata
+      - oracle-data:/opt/oracle/oradata
 volumes:
-  my-oracle-data:
+  oracle-data:
     external: true
     name: my-oracle-data
