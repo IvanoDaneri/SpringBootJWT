@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: oracle-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  volumeMode: Filesystem
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/run/desktop/mnt/host/e/progetti/github/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: oracle-volume-claim
+spec:
+  storageClassName: manual
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi

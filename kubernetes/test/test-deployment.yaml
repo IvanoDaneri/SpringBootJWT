@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oracle-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oracle-db
+  template:
+    metadata:
+      labels:
+        app: oracle-db
+    spec:
+      containers:
+        - name: oracle-db
+          image: gvenzl/oracle-xe
+          env:
+            - name: ORACLE_PASSWORD
+              value: 1q2w3e4r
