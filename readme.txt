@@ -19,7 +19,7 @@ In the SpringBoot application:
     - @NotEmpty and @NotNull annotations on the CompanyDto and EmployeeDto class fields
     - @Valid annotation on the rest method parameter
 
-- we define ControllerAdvices that manage a series of exceptions thrown by the rest Controllers and
+- we define ControllerAdvice that manage a series of exceptions thrown by the rest Controllers and
   which will be re-thrown to the rest client (classes: ControllerNotFoundAdvice, UserControllerAdvice)
 
 Some rest url examples:
