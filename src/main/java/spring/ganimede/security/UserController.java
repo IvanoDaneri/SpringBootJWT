@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 public class UserController
 {
-    private AppLogger logger = AppLoggerService.getLogger(UserController.class.getName());
+    private final AppLogger logger = AppLoggerService.getLogger(UserController.class.getName());
 
     @Value("${spring.security.jwt.session-duration}")
     private Integer sessionDuration;

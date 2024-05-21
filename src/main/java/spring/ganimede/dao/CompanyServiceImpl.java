@@ -16,7 +16,7 @@ import java.util.List;
 @Transactional
 public class CompanyServiceImpl implements CompanyService
 {
-    private AppLogger logger = AppLoggerService.getLogger(CompanyServiceImpl.class.getName());
+    private final AppLogger logger = AppLoggerService.getLogger(CompanyServiceImpl.class.getName());
 
     @Autowired
     CompanyRepository companyRepository;
@@ -48,7 +48,7 @@ public class CompanyServiceImpl implements CompanyService
     public CompanyDto findByCode(String code) throws CompanyNotFoundException
     {
         List<Company> companies = companyRepository.findByCode(code);
-        if(companies == null || companies.size() == 0)
+        if(companies == null || companies.isEmpty())
         {
             throw new CompanyNotFoundException(code);
         }
@@ -63,7 +63,7 @@ public class CompanyServiceImpl implements CompanyService
             throw new CompanyNotValidException(companyDto);
 
         List<Company> companies = companyRepository.findByCode(companyDto.getCode());
-        if(companies == null || companies.size() == 0)
+        if(companies == null || companies.isEmpty())
         {
             logger.info("Add company: " + companyDto.toString());
             return convertToDto(companyRepository.save(convertToEntity(companyDto)));

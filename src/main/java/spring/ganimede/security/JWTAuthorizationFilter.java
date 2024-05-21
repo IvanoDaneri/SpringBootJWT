@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class JWTAuthorizationFilter extends OncePerRequestFilter
 {
-    private AppLogger logger = AppLoggerService.getLogger(JWTAuthorizationFilter.class.getName());
+    private final AppLogger logger = AppLoggerService.getLogger(JWTAuthorizationFilter.class.getName());
 
     private final String AUTHORIZATION_PROPERTY = "Authorization";
     private final String AUTHORITIES = "authorities";

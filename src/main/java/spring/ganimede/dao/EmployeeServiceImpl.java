@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 @Transactional
 public class EmployeeServiceImpl implements EmployeeService
 {
-    private AppLogger logger = AppLoggerService.getLogger(EmployeeServiceImpl.class.getName());
+    private final AppLogger logger = AppLoggerService.getLogger(EmployeeServiceImpl.class.getName());
 
     @Autowired
     EmployeeRepository employeeRepository;
@@ -76,7 +76,7 @@ public class EmployeeServiceImpl implements EmployeeService
     @Override
     public EmployeeDto findByFiscalCode(String fiscalCode) throws EmployeeNotFoundException {
         List<Employee> employees = employeeRepository.findByFiscalCode(fiscalCode);
-        if(employees == null || employees.size() == 0)
+        if(employees == null || employees.isEmpty())
         {
             throw new EmployeeNotFoundException(fiscalCode);
         }
@@ -99,7 +99,7 @@ public class EmployeeServiceImpl implements EmployeeService
             throw new EmployeeNotValidException(employeeDto);
 
         List<Employee> employees = employeeRepository.findByFiscalCode(employeeDto.getFiscalCode());
-        if(employees == null || employees.size() == 0)
+        if(employees == null || employees.isEmpty())
         {
             logger.info("Add employee: " + employeeDto.toString());
             return convertToDto(employeeRepository.save(convertToEntity(employeeDto)));
@@ -131,7 +131,7 @@ public class EmployeeServiceImpl implements EmployeeService
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDto, employee);
         List<Company> companies = companyRepository.findByCode(employeeDto.getCompanyCode());
-        if(companies == null || companies.size() == 0)
+        if(companies == null || companies.isEmpty())
         {
             throw new CompanyNotFoundException(employeeDto.getCompanyCode());
         }
@@ -143,7 +143,7 @@ public class EmployeeServiceImpl implements EmployeeService
     private Employee updateEntity(Employee employee, EmployeeDto employeeDto) throws CompanyNotFoundException
     {
         List<Company> companies = companyRepository.findByCode(employeeDto.getCompanyCode());
-        if(companies == null || companies.size() == 0)
+        if(companies == null || companies.isEmpty())
         {
             throw new CompanyNotFoundException(employeeDto.getCompanyCode());
         }

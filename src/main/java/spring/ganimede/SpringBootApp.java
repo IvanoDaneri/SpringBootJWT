@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
 @SpringBootApplication
 public class SpringBootApp extends SpringBootServletInitializer
 {
-	private AppLogger logger = AppLoggerService.getLogger( this.getClass().getName() );
+	private final AppLogger logger = AppLoggerService.getLogger( this.getClass().getName() );
 
 	public static void main(String[] args)
 	{

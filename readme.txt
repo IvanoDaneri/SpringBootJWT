@@ -76,6 +76,8 @@ Two different SpringSecurity configurations have been implemented which are in a
    a validity token with a fixed expiry time.
 
 Enable of specific security configuration is operated by the jwtSecurity property defined in the application properties (application.properties, property: spring.security.jwt).
+Validity token duration is fixed by the sessionDuration property defined in the application properties (application.properties, property: spring.security.jwt.session-duration).
+
 Let's see the WebSecurityConfig SpringBoot configuration class:
 
 
@@ -138,9 +140,9 @@ The configuration that implements JWT includes a logon rest url that implements 
 - verify the credentials passed in the logon POST header
 - retrieves the roles assigned to the user
 - retrieves permissions linked to roles
-- generates and returns a validity token (JWT session token, which contains the encrypted permissions of the user's role) with a fixed expiration time (read from the application properties file)
+- generates and returns back a validity token (JWT session token, which contains the encrypted permissions of the user's role) with a fixed expiration duration (as I said, read from the application properties file)
 
-The token must be passed in the header of http request for rest calls to the protected rest urls (CompanyController,  EmployeeController), creating and set value of "Authorization" property with token.
+The token must be passed in the header of http request for rest calls to the protected rest urls (CompanyController,  EmployeeController), creating "Authorization" property and set value of property with token.
 
 2) Authorization phase.
 The Authorization phase is managed by the JWTAuthorizationFilter filter inserted in the filter chain which operates in the following way:
@@ -170,7 +172,7 @@ Token-based API authentication with Spring and JWT
 
 The protocol includes:
 
-- an authentication server that verifies the credentials and authenticates the client by generate a validity token with a fixed time validity (JWT session token)
+- an authentication server that verifies the credentials and authenticates the client by generate a validity token with a fixed duration validity (JWT session token)
 - an authorization server which accepts the token for each protected request and verify whether the client has permission to access that resource.
 
 

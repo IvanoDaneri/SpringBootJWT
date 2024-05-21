@@ -10,7 +10,7 @@ import java.util.*;
 
 @Service
 public class SimpleEmployeeRepositoryImpl implements SimpleEmployeeRepository {
-    private AppLogger logger = AppLoggerService.getLogger(SimpleEmployeeRepositoryImpl.class.getName());
+    private final AppLogger logger = AppLoggerService.getLogger(SimpleEmployeeRepositoryImpl.class.getName());
 
     private Map<Long, SimpleEmployee> employeeMap = new HashMap<>();
     private Long maxId = 0L;

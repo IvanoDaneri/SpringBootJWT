@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 public class EmployeeController
 {
-    private AppLogger logger = AppLoggerService.getLogger(EmployeeController.class.getName());
+    private final AppLogger logger = AppLoggerService.getLogger(EmployeeController.class.getName());
 
     @Autowired
     EmployeeService employeeService;

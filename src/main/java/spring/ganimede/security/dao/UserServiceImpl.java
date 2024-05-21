@@ -18,7 +18,7 @@ import java.util.Set;
 @Transactional
 public class UserServiceImpl implements UserService
 {
-    private AppLogger logger = AppLoggerService.getLogger(UserServiceImpl.class.getName());
+    private final AppLogger logger = AppLoggerService.getLogger(UserServiceImpl.class.getName());
 
     @Autowired
     UserRepository userRepository;
