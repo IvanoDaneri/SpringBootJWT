@@ -10,7 +10,7 @@ COPY target/springBootRest.jar ./
 COPY docker/start_app.sh ./
 # Use <root> user to run a command in image console
 USER root
-# Create a folder app/log (-p does not throw any error if folder already exists)
+# Create a folder app/log (-p does not throw any error if the folder already exists)
 RUN mkdir -p /log
 # This is the first command to run after container is started
 CMD /app/start_app.sh
