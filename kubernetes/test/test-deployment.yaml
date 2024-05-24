@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: oracle-db-deployment
+  name: oracle-test-deployment
 spec:
   replicas: 1
   selector:
