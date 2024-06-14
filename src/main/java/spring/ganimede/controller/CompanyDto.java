@@ -41,10 +41,7 @@ public class CompanyDto implements Serializable
         if(company.getAddress() == null || company.getAddress().isEmpty())
             return false;
 
-        if(company.getType() == null)
-            return false;
-
-        return true;
+        return company.getType() != null;
     }
 
 }
