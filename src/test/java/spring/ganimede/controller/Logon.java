@@ -60,8 +60,7 @@ public class Logon
             // Get rest template
             RestTemplate restTemplate = new RestTemplate();
             // Rest call postForObject
-            String token = restTemplate.postForObject(URL_REST_LOGON, request, String.class);
-            return token;
+            return restTemplate.postForObject(URL_REST_LOGON, request, String.class);
         }
         catch (RestClientException e)
         {
