@@ -4,6 +4,7 @@ public enum CompanyType
 {
     HIGH_TECH,
     MECHANICS,
+    NAVAL,
     CHEMICAL,
     LOGISTIC,
     FOOD_AND_BEVERAGE;

@@ -2,6 +2,7 @@
 SPRING-BOOT-REST-JWT APP 1.0
 ----------------------------
 
+----------------------------------
 I) GENERAL APPLICATION DESCRIPTION
 ----------------------------------
 
@@ -64,9 +65,9 @@ Provisioning phase:
       - insert_users_db.sql for production db
       - insert_users_test_db.sql for test db
 
-
+--------------------------------------
 II) SECURITY APPLICATION CONFIGURATION
-----------------------------------
+--------------------------------------
 
 Let's see the part of the application that concerns security (which is certainly the most interesting part of app).
 Two different SpringSecurity configurations have been implemented which are in alternative:
@@ -75,7 +76,7 @@ Two different SpringSecurity configurations have been implemented which are in a
 2) JWT configuration: carries out Authentication and Authorization by implementing the OAuth 2.0 JWT (Json Web Token) standard which provides
    a validity token with a fixed expiry time.
 
-Enable of specific security configuration is operated by the jwtSecurity property defined in the application properties (application.properties, property: spring.security.jwt).
+Enable of security configuration 1 or 2 is operated by the jwtSecurity property defined in the application properties (application.properties, property: spring.security.jwt).
 Validity token duration is fixed by the sessionDuration property defined in the application properties (application.properties, property: spring.security.jwt.session-duration).
 
 Let's see the WebSecurityConfig SpringBoot configuration class:
@@ -94,6 +95,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
     @Override
     public void configure( HttpSecurity http ) throws Exception
     {
+        // Init - This is configuration for preflight CORS approval
+        List<String> allowedMethods=new ArrayList<>();
+        allowedMethods.add("GET");
+        allowedMethods.add("POST");
+        allowedMethods.add("PUT");
+        allowedMethods.add("DELETE");
+        CorsConfiguration cors=new CorsConfiguration();
+        cors.setAllowedMethods(allowedMethods);
+        http.cors().configurationSource(request -> cors.applyPermitDefaultValues());
+        // End - This is configuration for preflight CORS approval
+
         // JWT security enabled
         if(jwtSecurity)
         {
@@ -143,6 +155,8 @@ The configuration that implements JWT includes a logon rest url that implements 
 - generates and returns back a validity token (JWT session token, which contains the encrypted permissions of the user's role) with a fixed expiration duration (as I said, read from the application properties file)
 
 The token must be passed in the header of http request for rest calls to the protected rest urls (CompanyController,  EmployeeController), creating "Authorization" property and set value of property with token.
+Example of token returned by logon method:
+Bearer: eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJHYWxpbGVvSldUIiwic3ViIjoibXlBZG1pbiIsImF1dGhvcml0aWVzIjpbeyJhdXRob3JpdHkiOiJBVVRIX0NPTVBBTllfQUREIn0seyJhdXRob3JpdHkiOiJBVVRIX0VNUExPWUVFX1JFQUQifSx7ImF1dGhvcml0eSI6IkFVVEhfQ09NUEFOWV9SRUFEIn0seyJhdXRob3JpdHkiOiJBVVRIX0VNUExPWUVFX0FERCJ9XSwiaWF0IjoxNzE5MjMxNDgxLCJleHAiOjE3MTkyMzIwODF9.Eo0wAQPqhi30uIo0Kzg50eCS8wWyEuSYtJPN03xgGSD-7aMsDaK3gDmEAqSEVurid1Xq8nYkiVasjeZuwT-WwQ
 
 2) Authorization phase.
 The Authorization phase is managed by the JWTAuthorizationFilter filter inserted in the filter chain which operates in the following way:
@@ -175,9 +189,44 @@ The protocol includes:
 - an authentication server that verifies the credentials and authenticates the client by generate a validity token with a fixed duration validity (JWT session token)
 - an authorization server which accepts the token for each protected request and verify whether the client has permission to access that resource.
 
+3) In addition, WebSecurityConfig enables Cross-Origin Sharing Resource (CORS) in that way:
 
+        // Init - This is configuration for preflight CORS approval
+        List<String> allowedMethods=new ArrayList<>();
+        allowedMethods.add("GET");
+        allowedMethods.add("POST");
+        allowedMethods.add("PUT");
+        allowedMethods.add("DELETE");
+        CorsConfiguration cors=new CorsConfiguration();
+        cors.setAllowedMethods(allowedMethods);
+        http.cors().configurationSource(request -> cors.applyPermitDefaultValues());
+        // End - This is configuration for preflight CORS approval
+
+Remember that CORS must be enabled and configured server side as we do in our SpringBootJWT application.
+In our example allow http CORS request from any origin.
+Here's some notes about CORS and CSRF (Cross-Site Request Forgery).
+
+CORS (Cross-Origin Resource Sharing):
+Purpose: CORS is a security mechanism that allows or restricts web browsers to make requests to a different domain (origin) than the one that served the web page.
+Scenario: Suppose you have a frontend application running on https://myfrontend.com and it needs to fetch data from an API hosted on https://api.example.com. CORS ensures that the browser can safely make requests across different origins.
+Implementation: CORS is implemented on the server side. The server includes specific HTTP headers (such as Access-Control-Allow-Origin) in its responses to indicate which origins are allowed to access its resources.
+Security Benefit: CORS prevents unauthorized cross-origin requests, enhancing security.
+
+CSRF (Cross-Site Request Forgery):
+Purpose: CSRF is an attack where an attacker tricks a user into performing an action on a website without their knowledge or consent.
+Scenario: Imagine you’re logged into your online banking application. An attacker sends you a malicious link that, when clicked, initiates a money transfer from your account to theirs.
+Implementation: CSRF attacks exploit the user’s existing session (usually via cookies). The attacker crafts a request (e.g., a money transfer) and tricks the user into executing it.
+Security Benefit: To defend against CSRF, servers can use techniques like token-based protection (e.g., including a CSRF token in forms) or the “cookie-to-header” pattern.
+
+In summary:
+
+CORS deals with cross-origin requests and controls which domains can access resources.
+CSRF is an attack that exploits a user’s session to perform unintended actions on their behalf.
+
+
+-------------------------
 III) DOCKER CONFIGURATION
-----------------------------------
+-------------------------
 
 Application SpringBootJwt is configured to run in Docker Compose with two containers:
 

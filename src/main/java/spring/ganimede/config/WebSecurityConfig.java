@@ -1,5 +1,6 @@
 package spring.ganimede.config;
 
+import org.springframework.web.cors.CorsConfiguration;
 import spring.ganimede.security.JWTAuthorizationFilter;
 import spring.ganimede.security.entity.PermissionEnum;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableWebSecurity
 @Configuration
@@ -27,6 +31,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
     @Override
     public void configure( HttpSecurity http ) throws Exception
     {
+        // Init - This is configuration for preflight CORS approval
+        List<String> allowedMethods=new ArrayList<>();
+        allowedMethods.add("GET");
+        allowedMethods.add("POST");
+        allowedMethods.add("PUT");
+        allowedMethods.add("DELETE");
+        CorsConfiguration cors=new CorsConfiguration();
+        cors.setAllowedMethods(allowedMethods);
+        http.cors().configurationSource(request -> cors.applyPermitDefaultValues());
+        // End - This is configuration for preflight CORS approval
+
         // JWT security enabled
         if(jwtSecurity)
         {

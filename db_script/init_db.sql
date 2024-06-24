@@ -89,6 +89,7 @@ declare
 
 id_leonardo number := spring_db.COMPANY_SEQ.nextval;
 id_thales number := spring_db.COMPANY_SEQ.nextval;
+id_fincantieri number := spring_db.COMPANY_SEQ.nextval;
 
 begin
 
@@ -96,6 +97,8 @@ INSERT INTO spring_db.companies (COMPANY_ID, NAME, COMPANY_CODE, ADDRESS, COMPAN
 VALUES (id_leonardo, 'Leonardo s.p.a.', '0003465', 'Via Puccini 2, 16154 Genova', 'HIGH_TECH', TO_DATE(to_char(sysdate,'YYYY-mm-dd'),'YYYY-mm-dd'), TO_DATE(to_char(sysdate,'YYYY-mm-dd'),'YYYY-mm-dd'));
 INSERT INTO spring_db.companies (COMPANY_ID, NAME, COMPANY_CODE, ADDRESS, COMPANY_TYPE, INSERT_DATE, UPDATE_DATE)
 VALUES (id_thales, 'Thales s.p.a.', '0005690', 'Roue The Artist 18, 25729 Tolosa', 'HIGH_TECH', TO_DATE(to_char(sysdate,'YYYY-mm-dd'),'YYYY-mm-dd'), TO_DATE(to_char(sysdate,'YYYY-mm-dd'),'YYYY-mm-dd'));
+INSERT INTO spring_db.companies (COMPANY_ID, NAME, COMPANY_CODE, ADDRESS, COMPANY_TYPE, INSERT_DATE, UPDATE_DATE)
+VALUES (id_fincantieri, 'Fincantieri s.p.a.', '0002378', 'Via Genova 1 34121, Trieste', 'NAVAL', TO_DATE(to_char(sysdate,'YYYY-mm-dd'),'YYYY-mm-dd'), TO_DATE(to_char(sysdate,'YYYY-mm-dd'),'YYYY-mm-dd'));
 
 INSERT INTO spring_db.employees (EMPLOYEE_ID, NAME, SURNAME, BIRTHDAY_DATE, FISCAL_CODE, ROLE, COMPANY_ID, INSERT_DATE, UPDATE_DATE)
 VALUES (spring_db.EMPLOYEE_SEQ.nextval, 'Mario', 'Rossi', TO_DATE('1972-07-23','YYYY-mm-dd'), 'ROSMAR72E23E488K', 'WORKER', id_leonardo, TO_DATE(to_char(sysdate,'YYYY-mm-dd'),'YYYY-mm-dd'), TO_DATE(to_char(sysdate,'YYYY-mm-dd'),'YYYY-mm-dd'));
