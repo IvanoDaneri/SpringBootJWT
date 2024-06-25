@@ -208,7 +208,8 @@ Here's some notes about CORS and CSRF (Cross-Site Request Forgery).
 
 CORS (Cross-Origin Resource Sharing):
 Purpose: CORS is a security mechanism that allows or restricts web browsers to make requests to a different domain (origin) than the one that served the web page.
-Scenario: Suppose you have a frontend application running on https://myfrontend.com and it needs to fetch data from an API hosted on https://api.example.com. CORS ensures that the browser can safely make requests across different origins.
+Scenario: Suppose you have a frontend application running on https://myfrontend.com that needs to fetch data from an API hosted on https://api.example.com.
+CORS ensures that the browser can safely make requests across different origins.
 Implementation: CORS is implemented on the server side. The server includes specific HTTP headers (such as Access-Control-Allow-Origin) in its responses to indicate which origins are allowed to access its resources.
 Security Benefit: CORS prevents unauthorized cross-origin requests, enhancing security.
 
