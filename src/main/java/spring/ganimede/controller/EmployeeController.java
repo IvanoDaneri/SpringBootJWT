@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-//@RequestMapping( value = Constants.APPLICATION_SERVICES )
+@CrossOrigin(maxAge = 3600)
 @RestController
 public class EmployeeController
 {
@@ -62,7 +62,7 @@ public class EmployeeController
         return employeeService.findByRole(role);
     }
 
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value="/employees/addEmployee", method = RequestMethod.POST, consumes = "application/json")
     public EmployeeDto addEmployee(@Valid @RequestBody EmployeeDto employeeDto)
     {

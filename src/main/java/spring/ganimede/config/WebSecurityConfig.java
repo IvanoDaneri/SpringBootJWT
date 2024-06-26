@@ -31,16 +31,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
     @Override
     public void configure( HttpSecurity http ) throws Exception
     {
-        // Init - This is configuration for preflight CORS approval
-        List<String> allowedMethods=new ArrayList<>();
-        allowedMethods.add("GET");
-        allowedMethods.add("POST");
-        allowedMethods.add("PUT");
-        allowedMethods.add("DELETE");
-        CorsConfiguration cors=new CorsConfiguration();
-        cors.setAllowedMethods(allowedMethods);
-        http.cors().configurationSource(request -> cors.applyPermitDefaultValues());
-        // End - This is configuration for preflight CORS approval
+        // This configuration enable CORS and disable CSRF for POST rest
+        http.cors()
+                .and()
+                .csrf().ignoringAntMatchers("/logon", "/companies/addCompany", "/employees/addEmployee");
 
         // JWT security enabled
         if(jwtSecurity)
@@ -54,10 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                     .antMatchers(HttpMethod.POST, "/logon").permitAll()                                                 // Permit logon url to everyone to pass credentials and get JWT token
                     .requestMatchers(PROTECTED_URLS)                                                                               // These are urls protected by JWTAuthorizationFilter
                     .authenticated()
-                    // This configuration disable default CORS (Cross-Origin Resource Sharing) configuration
-                    // that blocks rest POST calls from a client
                     .and()
-                    .csrf().disable()
                     // This configuration disable all other default configurations
                     .formLogin().disable()
                     .httpBasic().disable()
@@ -66,18 +57,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
         // No security enabled for rest urls
         else
         {
-            http
-                    .authorizeRequests()
+            http.authorizeRequests()
                     // Add url exceptions to http security configuration to avoid http authentication for rest url path
                     .antMatchers("/companies/**", "/employees/**", "/simpleEmployees/**").permitAll()
                     .anyRequest().authenticated()
                     .and()
-                    .httpBasic()
-                    // This configuration disable default CORS (Cross-Origin Resource Sharing) configuration
-                    // that blocks rest POST calls from a client
-                    .and()
-                    .csrf().disable();
+                    .httpBasic();
         }
+    }
+
+    private static CorsConfiguration getCorsConfiguration() {
+        List<String> allowedMethods=new ArrayList<>();
+        allowedMethods.add("GET");
+        allowedMethods.add("POST");
+        allowedMethods.add("PUT");
+        allowedMethods.add("DELETE");
+
+        List<String> allowedOrigins = new ArrayList<>();
+        allowedOrigins.add("http://localhost:4200/");
+
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedMethods(allowedMethods);
+        cors.setAllowedOrigins(allowedOrigins);
+        return cors;
     }
 
 }

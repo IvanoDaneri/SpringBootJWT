@@ -95,16 +95,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
     @Override
     public void configure( HttpSecurity http ) throws Exception
     {
-        // Init - This is configuration for preflight CORS approval
-        List<String> allowedMethods=new ArrayList<>();
-        allowedMethods.add("GET");
-        allowedMethods.add("POST");
-        allowedMethods.add("PUT");
-        allowedMethods.add("DELETE");
-        CorsConfiguration cors=new CorsConfiguration();
-        cors.setAllowedMethods(allowedMethods);
-        http.cors().configurationSource(request -> cors.applyPermitDefaultValues());
-        // End - This is configuration for preflight CORS approval
+        // This configuration enable CORS and disable CSFR for POST rest
+        http.cors()
+                .and()
+                .csrf().ignoringAntMatchers("/logon", "/companies/addCompany", "/employees/addEmployee");
+
 
         // JWT security enabled
         if(jwtSecurity)
@@ -189,18 +184,16 @@ The protocol includes:
 - an authentication server that verifies the credentials and authenticates the client by generate a validity token with a fixed duration validity (JWT session token)
 - an authorization server which accepts the token for each protected request and verify whether the client has permission to access that resource.
 
-3) In addition, WebSecurityConfig enables Cross-Origin Sharing Resource (CORS) in that way:
+3) WebSecurityConfig enables CORS. Why?
+Because to make @CrossOrigin annotation work at controller level, we need to explicitly enable CORS support at Spring Security level,
+otherwise CORS enabled requests may be blocked by Spring Security before reaching Spring MVC.
+In addition, WebSecurityConfig disable CSRF for POST rest, otherwise client receive 403 error (access to resource forbidden) (1)
+Here's our code:
 
-        // Init - This is configuration for preflight CORS approval
-        List<String> allowedMethods=new ArrayList<>();
-        allowedMethods.add("GET");
-        allowedMethods.add("POST");
-        allowedMethods.add("PUT");
-        allowedMethods.add("DELETE");
-        CorsConfiguration cors=new CorsConfiguration();
-        cors.setAllowedMethods(allowedMethods);
-        http.cors().configurationSource(request -> cors.applyPermitDefaultValues());
-        // End - This is configuration for preflight CORS approval
+        // This configuration enable CORS and disable CSRF for POST rest
+        http.cors()
+                .and()
+                .csrf().ignoringAntMatchers("/logon", "/companies/addCompany", "/employees/addEmployee");
 
 Remember that CORS must be enabled and configured server side as we do in our SpringBootJWT application.
 In our example allow http CORS request from any origin.
@@ -224,6 +217,18 @@ In summary:
 CORS deals with cross-origin requests and controls which domains can access resources.
 CSRF is an attack that exploits a user’s session to perform unintended actions on their behalf.
 
+Here's a detailed description about CORS:
+https://aws.amazon.com/it/what-is/cross-origin-resource-sharing/
+
+Here's a link about CORS support in Spring Framework:
+https://spring.io/blog/2015/06/08/cors-support-in-spring-framework
+
+(1) By default, Spring Security enables CSRF protection.
+If the CSRF token is missing from the request header in PUT, POST, DELETE request, the server responds with a 403 error.
+This behavior isn’t specific to any server environment, including localhost, staging, or production.
+However, it’s important to note that disabling CSRF protection isn’t generally recommended in an application in production.
+CSRF protection is a crucial security measure to prevent Cross-Site Forgery attacks.
+Therefore, it’s advisable to include the CSRF token in the request header of state-changing operations.
 
 -------------------------
 III) DOCKER CONFIGURATION

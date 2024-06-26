@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-//@RequestMapping( value = Constants.APPLICATION_SERVICES)
+@CrossOrigin(maxAge = 3600)
 @RestController
 public class CompanyController
 {
@@ -43,7 +43,7 @@ public class CompanyController
         return companyService.findByCode(code);
     }
 
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value="/companies/addCompany", method = RequestMethod.POST, consumes = "application/json")
     public CompanyDto addCompany(@Valid @RequestBody CompanyDto companyDto)
     {

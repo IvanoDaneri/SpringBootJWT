@@ -32,7 +32,7 @@ public class UserController
         secretInfo = SecretInfo.getInstance();
     }
 
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value="/logon", method = RequestMethod.POST, consumes = "application/json")
     public String logon(@Valid @RequestBody CredentialsDto credentials)
     {
