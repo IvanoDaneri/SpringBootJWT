@@ -185,7 +185,7 @@ The protocol includes:
 - an authorization server which accepts the token for each protected request and verify whether the client has permission to access that resource.
 
 3) WebSecurityConfig enables CORS. Why?
-Because to make @CrossOrigin annotation work at controller level, we need to explicitly enable CORS support at Spring Security level,
+Because to make @CrossOrigin annotation work at controller level (classes annotated with @RestController), we need to explicitly enable CORS support at Spring Security level,
 otherwise CORS enabled requests may be blocked by Spring Security before reaching Spring MVC.
 In addition, WebSecurityConfig disable CSRF for POST rest, otherwise client receive 403 error (access to resource forbidden) (1)
 Here's our code:
