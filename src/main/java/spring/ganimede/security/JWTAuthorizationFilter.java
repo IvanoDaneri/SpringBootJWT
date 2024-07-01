@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import spring.ganimede.logger.AppLogger;
 import spring.ganimede.logger.AppLoggerService;
+import spring.ganimede.security.dao.UserService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -21,7 +22,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter
     private final AppLogger logger = AppLoggerService.getLogger(JWTAuthorizationFilter.class.getName());
 
     private final String AUTHORIZATION_PROPERTY = "Authorization";
-    private final String AUTHORITIES = "authorities";
     private final String EMPTY_STRING = "";
 
     SecretInfo secretInfo;
@@ -40,7 +40,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter
             if(checkJWTToken(request, response))
             {
                 Claims claims = validateToken(request);
-                if(claims.get(AUTHORITIES) != null)
+                if(claims.get(UserService.AUTHORITIES) != null)
                 {
                     setUpSpringAuthentication(claims);
                 }
@@ -69,12 +69,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter
     private void setUpSpringAuthentication(Claims claims)
     {
         @SuppressWarnings("unchecked")
-        List<HashMap<String, String>> authorities = (List) claims.get(AUTHORITIES);
-        List<Collection<String>> grants = authorities.stream().map(HashMap::values).collect(Collectors.toList());
+        List<String> authorities = (List) claims.get(UserService.AUTHORITIES);
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grants.forEach(strings -> strings.forEach(s -> grantedAuthorities.add(new SimpleGrantedAuthority(s))));
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(claims.getSubject(),null,
-                grantedAuthorities);
+        authorities.forEach(authority -> grantedAuthorities.add(new SimpleGrantedAuthority(authority)));
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(claims.getSubject(),null, grantedAuthorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 

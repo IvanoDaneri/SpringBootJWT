@@ -21,42 +21,18 @@ public class UserController
 {
     private final AppLogger logger = AppLoggerService.getLogger(UserController.class.getName());
 
-    @Value("${spring.security.jwt.session-duration}")
-    private Integer sessionDuration;
-
-    SecretInfo secretInfo;
     @Autowired
-    UserService userService;
+    JwtTokenService jwtTokenService;
 
-    public UserController() {
-        secretInfo = SecretInfo.getInstance();
-    }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value="/logon", method = RequestMethod.POST, consumes = "application/json")
     public String logon(@Valid @RequestBody CredentialsDto credentials)
     {
         logger.info("User: " + credentials.getUser() + " - Try to login ...");
-        return getJWTToken(credentials.getUser(), credentials.getPassword());
-    }
-
-    private String getJWTToken(String user, String password)
-    {
-        // Authentication server check credentials and get permissions of user's role
-        List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList(userService.getCommaSeparatedAuthorityList(user, password));
-        // JWT token that will be generated it will authorize resources in these permission list (list of GrantedAuthority)
-        String token = Jwts
-                .builder()
-                .setId(secretInfo.getTOKEN_ID())
-                .setSubject(user)
-                .claim("authorities",
-                        grantedAuthorities)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + sessionDuration))
-                .signWith(secretInfo.getSecretKey(), SignatureAlgorithm.HS512).compact();
-
-        logger.info("User: " + user + " logged");
-        return secretInfo.getTOKEN_PREFIX() + token;
+        String token = jwtTokenService.generateToken(credentials.getUser(), credentials.getPassword());
+        logger.info("User " + credentials.getUser() + " logged");
+        return token;
     }
 
 }

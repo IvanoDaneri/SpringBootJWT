@@ -66,20 +66,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
         }
     }
 
-    private static CorsConfiguration getCorsConfiguration() {
-        List<String> allowedMethods=new ArrayList<>();
-        allowedMethods.add("GET");
-        allowedMethods.add("POST");
-        allowedMethods.add("PUT");
-        allowedMethods.add("DELETE");
-
-        List<String> allowedOrigins = new ArrayList<>();
-        allowedOrigins.add("http://localhost:4200/");
-
-        CorsConfiguration cors = new CorsConfiguration();
-        cors.setAllowedMethods(allowedMethods);
-        cors.setAllowedOrigins(allowedOrigins);
-        return cors;
-    }
-
 }

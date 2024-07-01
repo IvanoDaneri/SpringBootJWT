@@ -69,7 +69,7 @@ Provisioning phase:
 II) SECURITY APPLICATION CONFIGURATION
 --------------------------------------
 
-Let's see the part of the application that concerns security (which is certainly the most interesting part of app).
+Let's see the part of the application that concerns about security (which is certainly the most interesting part of app).
 Two different SpringSecurity configurations have been implemented which are in alternative:
 
 1) basic configuration: any user is authorized to access the URLs of the rest exposed by rest controllers (CompanyController, EmployeeController).
@@ -144,7 +144,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 1) Authentication phase.
 The configuration that implements JWT includes a logon rest url that implements the Authentication phase (class: UserController):
 
-- verify the credentials passed in the logon POST header
+- verify the credentials passed in http POST calling UserController.logon rest
 - retrieves the roles assigned to the user
 - retrieves permissions linked to roles
 - generates and returns back a validity token (JWT session token, which contains the encrypted permissions of the user's role) with a fixed expiration duration (as I said, read from the application properties file)
@@ -181,8 +181,12 @@ Token-based API authentication with Spring and JWT
 
 The protocol includes:
 
-- an authentication server that verifies the credentials and authenticates the client by generate a validity token with a fixed duration validity (JWT session token)
-- an authorization server which accepts the token for each protected request and verify whether the client has permission to access that resource.
+- an Authentication Server that verifies the credentials and authenticates the client by generate a validity token with a fixed duration validity (JWT session token)
+- an Authorization Server which accepts the token for each protected request and verify whether the client has permission to access that resource.
+
+Another interesting article on JSON Web Token:
+
+https://sopheamak.medium.com/springboot-how-to-invalidate-jwt-token-such-as-logout-or-reset-all-active-tokens-73f55289d47b
 
 3) WebSecurityConfig enables CORS. Why?
 Because to make @CrossOrigin annotation work at controller level (classes annotated with @RestController), we need to explicitly enable CORS support at Spring Security level,
