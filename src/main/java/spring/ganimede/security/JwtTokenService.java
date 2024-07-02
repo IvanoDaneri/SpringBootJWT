@@ -43,7 +43,7 @@ public class JwtTokenService
     }
 
     public List<String> getPermissions(String token) {
-        return getClaimFromToken(token, claims -> (List) claims.get(UserService.AUTHORITIES));
+        return getClaimFromToken(token, claims -> (List) claims.get(UserService.PERMISSIONS));
     }
 
     // Check token validity

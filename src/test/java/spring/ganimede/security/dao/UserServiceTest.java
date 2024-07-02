@@ -70,9 +70,9 @@ public class UserServiceTest
     @Test
     public void test3_checkCommaSeparatedAuthorityList()
     {
-        Assert.notNull(userService.getCommaSeparatedAuthorityList("guest", "myGuestPassword"));
-        Assert.notNull(userService.getCommaSeparatedAuthorityList("mySup", "mySupPassword"));
-        Assert.notNull(userService.getCommaSeparatedAuthorityList("myAdmin", "myAdminPassword"));
+        Assert.notNull(userService.getCommaSeparatedPermissionList("guest", "myGuestPassword"));
+        Assert.notNull(userService.getCommaSeparatedPermissionList("mySup", "mySupPassword"));
+        Assert.notNull(userService.getCommaSeparatedPermissionList("myAdmin", "myAdminPassword"));
     }
 
     private void printUserPermission(String userName)

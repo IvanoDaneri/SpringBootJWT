@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService
     UserRepository userRepository;
 
     @Override
-    public String getCommaSeparatedAuthorityList(String userName, String password) throws InvalidUserException, InvalidPasswordException
+    public String getCommaSeparatedPermissionList(String userName, String password) throws InvalidUserException, InvalidPasswordException
     {
         List<User> users = userRepository.findByName(userName);
         if(users == null || users.isEmpty())
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService
         });
 
         final Map<String, Object> claims = new HashMap<>();
-        claims.put(AUTHORITIES, permissioList);
+        claims.put(PERMISSIONS, permissioList);
         return claims;
     }
 
