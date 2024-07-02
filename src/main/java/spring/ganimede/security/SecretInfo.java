@@ -2,14 +2,16 @@ package spring.ganimede.security;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 
 import javax.crypto.SecretKey;
 
+@Getter
 public class SecretInfo
 {
-    private static final String TOKEN_ID = "GalileoJWT";
+    private static final String TOKEN_ID = "MyTokenID";
     private static final String TOKEN_PREFIX = "Bearer: ";
-    private SecretKey secretKey;
+    private final SecretKey secretKey;
     private static SecretInfo secretInfo;
 
     public static SecretInfo getInstance()
@@ -25,10 +27,6 @@ public class SecretInfo
     public SecretInfo()
     {
         secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    }
-
-    public SecretKey getSecretKey() {
-        return secretKey;
     }
 
     public String getTOKEN_PREFIX() {

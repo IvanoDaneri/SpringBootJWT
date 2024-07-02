@@ -1,6 +1,6 @@
 package spring.ganimede.config;
 
-import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import spring.ganimede.security.JWTAuthorizationFilter;
 import spring.ganimede.security.entity.PermissionEnum;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +28,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
     @Value("${spring.security.jwt}")
     private Boolean jwtSecurity;
 
+    @Autowired
+    JWTAuthorizationFilter jwtAuthorizationFilter;
+
     @Override
     public void configure( HttpSecurity http ) throws Exception
     {
@@ -39,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
         // JWT security enabled
         if(jwtSecurity)
         {
-            http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+            http.addFilterAfter(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                     .authorizeRequests()
                     .antMatchers(HttpMethod.GET,"/companies/**").hasAuthority(PermissionEnum.AUTH_COMPANY_READ.name())      // CompanyController GET must have AUTH_COMPANY_READ permission
                     .antMatchers(HttpMethod.POST,"/companies/**").hasAuthority(PermissionEnum.AUTH_COMPANY_ADD.name())      // CompanyController POST must have AUTH_COMPANY_ADD permission

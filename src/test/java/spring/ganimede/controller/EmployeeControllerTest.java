@@ -29,7 +29,6 @@ import static org.junit.Assert.fail;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EmployeeControllerTest extends Logon
 {
-    private static String URL_REST_FIND_COMPANY_BY_CODE = "http://localhost:8094/springBootRest/companies/findByCode";
     private static String URL_REST_FIND_ALL_EMPLOYEES = "http://localhost:8094/springBootRest/employees";
     private static String URL_REST_FIND_EMPLOYEE_BY_FISCAL_CODE = "http://localhost:8094/springBootRest/employees/findByFiscalCode";
     private static String URL_REST_ADD_EMPLOYEE = "http://localhost:8094/springBootRest/employees/addEmployee";
@@ -172,6 +171,7 @@ public class EmployeeControllerTest extends Logon
 
     private CompanyDto findCompanyByCode(String companyCode) throws AssertionError
     {
+        String URL_REST_FIND_COMPANY_BY_CODE = "http://localhost:8094/springBootRest/companies/findByCode";
         String url = URL_REST_FIND_COMPANY_BY_CODE + "/" + companyCode;
 
         try

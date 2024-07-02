@@ -5,8 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Service;
 import spring.ganimede.logger.AppLogger;
 import spring.ganimede.logger.AppLoggerService;
@@ -44,7 +42,7 @@ public class JwtTokenService
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    public List<String> getRoles(String token) {
+    public List<String> getPermissions(String token) {
         return getClaimFromToken(token, claims -> (List) claims.get(UserService.AUTHORITIES));
     }
 
@@ -57,6 +55,11 @@ public class JwtTokenService
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
+    }
+
+    // For retrieving any information from token we will need the secret key
+    public Claims getAllClaimsFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(secretInfo.getSecretKey()).build().parseClaimsJws(token).getBody();
     }
 
     // Generate token for user.
@@ -75,9 +78,9 @@ public class JwtTokenService
         // JWT token that will be generated it will authorize resources in these permission list (list of GrantedAuthority)
         String token = Jwts
                 .builder()
+                .setClaims(claims)
                 .setId(secretInfo.getTOKEN_ID())
                 .setSubject(user)
-                .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + sessionDuration))
                 .signWith(secretInfo.getSecretKey(), SignatureAlgorithm.HS512).compact();
@@ -85,11 +88,6 @@ public class JwtTokenService
         logger.info("Jwt token generated for user: " + user);
 
         return secretInfo.getTOKEN_PREFIX() + token;
-    }
-
-    // For retrieving any information from token we will need the secret key
-    private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secretInfo.getSecretKey()).parseClaimsJws(token).getBody();
     }
 
     // Check if the token has expired
