@@ -47,10 +47,12 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter
                 if(jwtToken != null)
                 {
                     setUpSpringAuthentication(jwtToken);
+                    logger.info("JWT session present!");
                 }
                 else
                 {
                     SecurityContextHolder.clearContext();
+                    logger.info("No JWT session present!");
                 }
             }
             else

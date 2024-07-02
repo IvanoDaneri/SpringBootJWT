@@ -82,7 +82,7 @@ public class JwtTokenService
                 .setId(secretInfo.getTOKEN_ID())
                 .setSubject(user)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + sessionDuration))
+                .setExpiration(new Date(System.currentTimeMillis() + sessionDuration * 1000))
                 .signWith(secretInfo.getSecretKey(), SignatureAlgorithm.HS512).compact();
 
         logger.info("Jwt token generated for user: " + user);
