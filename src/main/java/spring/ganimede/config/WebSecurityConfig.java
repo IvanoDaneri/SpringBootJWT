@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
         // This configuration enable CORS and disable CSRF for POST rest
         http.cors()
                 .and()
-                .csrf().ignoringAntMatchers("/logon", "/companies/addCompany", "/employees/addEmployee");
+                .csrf().ignoringAntMatchers("/logon", "/logoff", "/companies/addCompany", "/employees/addEmployee");
 
         // JWT security enabled
         if(jwtSecurity)
@@ -47,6 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                     .antMatchers(HttpMethod.GET,"/employees/**").hasAuthority(PermissionEnum.AUTH_EMPLOYEE_READ.name())     // EmployeeController GET must have AUTH_EMPLOYEE_READ permission
                     .antMatchers(HttpMethod.POST,"/employees/**").hasAuthority(PermissionEnum.AUTH_EMPLOYEE_ADD.name())     // EmployeeController POST must have AUTH_EMPLOYEE_ADD permission
                     .antMatchers(HttpMethod.POST, "/logon").permitAll()                                                 // Permit logon url to everyone to pass credentials and get JWT token
+                    .antMatchers(HttpMethod.POST, "/logoff").permitAll()                                                 // Permit logon url to everyone to pass credentials and get JWT token
                     .requestMatchers(PROTECTED_URLS)                                                                               // These are urls protected by JWTAuthorizationFilter
                     .authenticated()
                     .and()

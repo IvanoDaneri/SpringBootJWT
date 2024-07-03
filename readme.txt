@@ -142,7 +142,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 }
 
 1) Authentication phase.
-The configuration that implements JWT includes a logon rest url that implements the Authentication phase (class: UserController):
+The configuration that implements JWT includes a logon rest url (UserController.logon) that implements the Authentication phase (class: UserController):
 
 - verify the credentials passed in http POST calling UserController.logon rest
 - retrieves the roles assigned to the user
@@ -153,12 +153,15 @@ The token must be passed in the header of http request for rest calls to the pro
 Example of token returned by logon method:
 Bearer: eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJHYWxpbGVvSldUIiwic3ViIjoibXlBZG1pbiIsImF1dGhvcml0aWVzIjpbeyJhdXRob3JpdHkiOiJBVVRIX0NPTVBBTllfQUREIn0seyJhdXRob3JpdHkiOiJBVVRIX0VNUExPWUVFX1JFQUQifSx7ImF1dGhvcml0eSI6IkFVVEhfQ09NUEFOWV9SRUFEIn0seyJhdXRob3JpdHkiOiJBVVRIX0VNUExPWUVFX0FERCJ9XSwiaWF0IjoxNzE5MjMxNDgxLCJleHAiOjE3MTkyMzIwODF9.Eo0wAQPqhi30uIo0Kzg50eCS8wWyEuSYtJPN03xgGSD-7aMsDaK3gDmEAqSEVurid1Xq8nYkiVasjeZuwT-WwQ
 
+UserController provides also logoff method that adds jwt token in a black list (to avoid someone can use a valid token after the user
+has logged off to his application).
+
 2) Authorization phase.
 The Authorization phase is managed by the JWTAuthorizationFilter filter inserted in the filter chain which operates in the following way:
 
 - intercepts the URLs of the protected rests and checks the presence of the token (extracts the value of the "Authorization" property in the request header and checks valid format)
-- verifies the validity of the token and extracts the Claim;
-- extracts the list of permissions from the Claim and enables URL calls if the token's permissions include the permissions expected for that URL.
+- verifies the validity of the token (if token is not expired or is not in black list) and extracts the Claim;
+- extracts the list of permissions from the Claim and enables URL request if the token's permissions include the permissions expected for that URL.
 
    For example the rest url:
 
@@ -172,7 +175,7 @@ The Authorization phase is managed by the JWTAuthorizationFilter filter inserted
 
         .antMatchers(HttpMethod.GET,"/companies/**").hasAuthority(PermissionEnum.AUTH_COMPANY_READ.name())
 
-   therefore, PermissionEnum.AUTH_COMPANY_READ must be present among the permissions encrypted in the token for that user, otherwise the filter will return: 404 Access Forbidden
+   therefore, PermissionEnum.AUTH_COMPANY_READ must be present among the permissions encrypted in the token passed, otherwise the filter will return: 404 Access Forbidden
 
 As mentioned, the authentication/authorization management uses the standard protocol JSON Web Token (JWT, see https://jwt.io/).
 The authentication/authorization process is described in the Softtek article:
@@ -188,9 +191,9 @@ Another interesting article on JSON Web Token:
 
 https://sopheamak.medium.com/springboot-how-to-invalidate-jwt-token-such-as-logout-or-reset-all-active-tokens-73f55289d47b
 
-3) WebSecurityConfig enables CORS. Why?
+3) WebSecurityConfig must enable CORS. Why?
 Because to make @CrossOrigin annotation work at controller level (classes annotated with @RestController), we need to explicitly enable CORS support at Spring Security level,
-otherwise CORS enabled requests may be blocked by Spring Security before reaching Spring MVC.
+otherwise requests may be blocked by Spring Security (CORS violation) before reaching Spring MVC.
 In addition, WebSecurityConfig disable CSRF for POST rest, otherwise client receive 403 error (access to resource forbidden) (1)
 Here's our code:
 

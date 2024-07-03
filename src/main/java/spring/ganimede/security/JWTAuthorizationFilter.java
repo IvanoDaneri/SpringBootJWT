@@ -22,17 +22,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter
 {
     private final AppLogger logger = AppLoggerService.getLogger(JWTAuthorizationFilter.class.getName());
 
-    private final String AUTHORIZATION_PROPERTY = "Authorization";
-    private final String EMPTY_STRING = "";
+    public static final String AUTHORIZATION_PROPERTY = "Authorization";
+    public static final String EMPTY_STRING = "";
 
     @Autowired
     JwtTokenService jwtTokenService;
-
-    SecretInfo secretInfo;
-
-    public JWTAuthorizationFilter() {
-        secretInfo = SecretInfo.getInstance();
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
@@ -41,22 +35,34 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter
 
         try
         {
+            // Check if token is present
             if(checkJWTToken(request, response))
             {
+                // Check if token is valid
                 String jwtToken = validateToken(request);
                 if(jwtToken != null)
                 {
-                    setUpSpringAuthentication(jwtToken);
-                    logger.info("JWT session present!");
+                    // Check if token is in black list (user logged out)
+                    if(!isTokenBlocked(jwtToken))
+                    {
+                        logger.info("JWT session present");
+                        setUpSpringAuthentication(jwtToken);
+                    }
+                    else
+                    {
+                        logger.info("JWT token is in black list (user logged out)");
+                        SecurityContextHolder.clearContext();
+                    }
                 }
                 else
                 {
+                    logger.info("JWT session expired");
                     SecurityContextHolder.clearContext();
-                    logger.info("No JWT session present!");
                 }
             }
             else
             {
+                logger.info("No JWT session present");
                 SecurityContextHolder.clearContext();
             }
 
@@ -85,16 +91,21 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter
 
     private String validateToken(HttpServletRequest request)
     {
-        String jwtToken = request.getHeader(AUTHORIZATION_PROPERTY).replace(secretInfo.getTOKEN_PREFIX(), EMPTY_STRING);
+        String jwtToken = request.getHeader(AUTHORIZATION_PROPERTY).replace(SecretInfo.TOKEN_PREFIX, EMPTY_STRING);
         if(jwtTokenService.validateToken(jwtToken))
             return jwtToken;
         else
             return null;
     }
 
+    private boolean isTokenBlocked(String jwtToken)
+    {
+        return jwtTokenService.isTokenInBlackList(jwtToken);
+    }
+
     private boolean checkJWTToken(HttpServletRequest request, HttpServletResponse response)
     {
         String authenticationHeader = request.getHeader(AUTHORIZATION_PROPERTY);
-        return authenticationHeader != null && authenticationHeader.startsWith(secretInfo.getTOKEN_PREFIX());
+        return authenticationHeader != null && authenticationHeader.startsWith(SecretInfo.TOKEN_PREFIX);
     }
 }

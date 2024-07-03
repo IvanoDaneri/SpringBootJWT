@@ -9,8 +9,9 @@ import javax.crypto.SecretKey;
 @Getter
 public class SecretInfo
 {
+    public static final String TOKEN_PREFIX = "Bearer: ";
     private static final String TOKEN_ID = "MyTokenID";
-    private static final String TOKEN_PREFIX = "Bearer: ";
+
     private final SecretKey secretKey;
     private static SecretInfo secretInfo;
 

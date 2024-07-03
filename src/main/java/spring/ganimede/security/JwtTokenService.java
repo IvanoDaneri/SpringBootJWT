@@ -9,10 +9,15 @@ import org.springframework.stereotype.Service;
 import spring.ganimede.logger.AppLogger;
 import spring.ganimede.logger.AppLoggerService;
 import spring.ganimede.security.dao.UserService;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Service
@@ -28,9 +33,32 @@ public class JwtTokenService
     @Autowired
     UserService userService;
 
-    public JwtTokenService() {
-        secretInfo = SecretInfo.getInstance();
+    LoadingCache<String, String> blackList;
+
+    public JwtTokenService()
+    {
+
     }
+
+    @PostConstruct
+    private void init()
+    {
+        secretInfo = SecretInfo.getInstance();
+
+        // Management of token black list
+        CacheLoader<String, String> loader =
+                new CacheLoader<String, String>() {
+                    @Override
+                    public String load(String key) {
+                        return key.toUpperCase();
+                    }
+                };
+
+        blackList = CacheBuilder.newBuilder()
+                .expireAfterWrite(sessionDuration, TimeUnit.SECONDS)
+                .build(loader);
+    }
+
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -89,6 +117,17 @@ public class JwtTokenService
 
         return secretInfo.getTOKEN_PREFIX() + token;
     }
+
+    public void addTokenToBlackList(String token)
+    {
+        blackList.put(token, token);
+    }
+
+    public boolean isTokenInBlackList(String token)
+    {
+        return blackList.getIfPresent(token) != null;
+    }
+
 
     // Check if the token has expired
     private Boolean isTokenExpired(String token) {

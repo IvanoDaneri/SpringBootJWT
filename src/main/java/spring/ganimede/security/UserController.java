@@ -1,5 +1,6 @@
 package spring.ganimede.security;
 
+import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import spring.ganimede.logger.AppLogger;
@@ -33,6 +34,15 @@ public class UserController
         String token = jwtTokenService.generateToken(credentials.getUser(), credentials.getPassword());
         logger.info("User " + credentials.getUser() + " logged");
         return token;
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(value="/logoff", method = RequestMethod.POST, consumes = "application/json")
+    public void logoff(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationProp)
+    {
+        logger.info("Logoff user");
+        String token = authorizationProp.replace(SecretInfo.TOKEN_PREFIX, JWTAuthorizationFilter.EMPTY_STRING);
+        jwtTokenService.addTokenToBlackList(token);
     }
 
 }
