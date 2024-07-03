@@ -92,31 +92,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
     @Value("${spring.security.jwt}")
     private Boolean jwtSecurity;
 
+    @Autowired
+    JWTAuthorizationFilter jwtAuthorizationFilter;
+
     @Override
     public void configure( HttpSecurity http ) throws Exception
     {
-        // This configuration enable CORS and disable CSFR for POST rest
+        // This configuration enable CORS and disable CSRF for POST rest
         http.cors()
                 .and()
-                .csrf().ignoringAntMatchers("/logon", "/companies/addCompany", "/employees/addEmployee");
-
+                .csrf().ignoringAntMatchers("/logon", "/logoff", "/companies/addCompany", "/employees/addEmployee");
 
         // JWT security enabled
         if(jwtSecurity)
         {
-            http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+            http.addFilterAfter(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                     .authorizeRequests()
                     .antMatchers(HttpMethod.GET,"/companies/**").hasAuthority(PermissionEnum.AUTH_COMPANY_READ.name())      // CompanyController GET must have AUTH_COMPANY_READ permission
                     .antMatchers(HttpMethod.POST,"/companies/**").hasAuthority(PermissionEnum.AUTH_COMPANY_ADD.name())      // CompanyController POST must have AUTH_COMPANY_ADD permission
                     .antMatchers(HttpMethod.GET,"/employees/**").hasAuthority(PermissionEnum.AUTH_EMPLOYEE_READ.name())     // EmployeeController GET must have AUTH_EMPLOYEE_READ permission
                     .antMatchers(HttpMethod.POST,"/employees/**").hasAuthority(PermissionEnum.AUTH_EMPLOYEE_ADD.name())     // EmployeeController POST must have AUTH_EMPLOYEE_ADD permission
-                    .antMatchers(HttpMethod.POST, "/logon").permitAll()                                                     // Permit logon url to everyone to pass credentials and get JWT token
-                    .requestMatchers(PROTECTED_URLS)                                                                        // These are urls protected by JWTAuthorizationFilter
+                    .antMatchers(HttpMethod.POST, "/logon").permitAll()                                                 // Permit logon url to everyone to pass credentials and get JWT token
+                    .antMatchers(HttpMethod.POST, "/logoff").permitAll()                                                 // Permit logon url to everyone to pass credentials and get JWT token
+                    .requestMatchers(PROTECTED_URLS)                                                                               // These are urls protected by JWTAuthorizationFilter
                     .authenticated()
-                    // This configuration disable default CORS (Cross-Origin Resource Sharing) configuration
-                    // that blocks rest POST calls from a client
                     .and()
-                    .csrf().disable()
                     // This configuration disable all other default configurations
                     .formLogin().disable()
                     .httpBasic().disable()
@@ -125,17 +125,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
         // No security enabled for rest urls
         else
         {
-            http
-                    .authorizeRequests()
+            http.authorizeRequests()
                     // Add url exceptions to http security configuration to avoid http authentication for rest url path
                     .antMatchers("/companies/**", "/employees/**", "/simpleEmployees/**").permitAll()
                     .anyRequest().authenticated()
                     .and()
-                    .httpBasic()
-                    // This configuration disable default CORS (Cross-Origin Resource Sharing) configuration
-                    // that blocks rest POST calls from a client
-                    .and()
-                    .csrf().disable();
+                    .httpBasic();
         }
     }
 
