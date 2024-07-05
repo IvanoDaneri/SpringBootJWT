@@ -10,8 +10,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.web.bind.annotation.*;
+import spring.ganimede.security.dao.UserRepository;
 import spring.ganimede.security.dao.UserService;
 import spring.ganimede.security.entity.PermissionEnum;
+import spring.ganimede.security.entity.Role;
+import spring.ganimede.security.entity.User;
 
 import javax.validation.Valid;
 import java.util.Date;
@@ -25,15 +28,22 @@ public class UserController
     @Autowired
     JwtTokenService jwtTokenService;
 
+    @Autowired
+    UserRepository userRepository;
+
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value="/logon", method = RequestMethod.POST, consumes = "application/json")
-    public String logon(@Valid @RequestBody CredentialsDto credentials)
+    public SessionDto logon(@Valid @RequestBody CredentialsDto credentials)
     {
         logger.info("User: " + credentials.getUser() + " - Try to login ...");
         String token = jwtTokenService.generateToken(credentials.getUser(), credentials.getPassword());
-        logger.info("User " + credentials.getUser() + " logged");
-        return token;
+        List<User> users = userRepository.findByName(credentials.getUser());
+        User user = users.stream().findFirst().get();
+        // We simplify user management getting only first user's role
+        Role role = user.getRoles().stream().findFirst().get();
+        logger.info("User " + user + " logged");
+        return new SessionDto(user.getName(), role.getName(), token);
     }
 
     @CrossOrigin(origins = "http://localhost:4200")

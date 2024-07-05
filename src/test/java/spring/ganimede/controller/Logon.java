@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import spring.ganimede.security.SessionDto;
 
 import static org.junit.Assert.fail;
 
@@ -60,7 +61,8 @@ public class Logon
             // Get rest template
             RestTemplate restTemplate = new RestTemplate();
             // Rest call postForObject
-            return restTemplate.postForObject(URL_REST_LOGON, request, String.class);
+            SessionDto sessionDto = restTemplate.postForObject(URL_REST_LOGON, request, SessionDto.class);
+            return sessionDto.getToken();
         }
         catch (RestClientException e)
         {
