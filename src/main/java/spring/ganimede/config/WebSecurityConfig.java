@@ -46,9 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                     .antMatchers(HttpMethod.POST,"/companies/**").hasAuthority(PermissionEnum.AUTH_COMPANY_ADD.name())      // CompanyController POST must have AUTH_COMPANY_ADD permission
                     .antMatchers(HttpMethod.GET,"/employees/**").hasAuthority(PermissionEnum.AUTH_EMPLOYEE_READ.name())     // EmployeeController GET must have AUTH_EMPLOYEE_READ permission
                     .antMatchers(HttpMethod.POST,"/employees/**").hasAuthority(PermissionEnum.AUTH_EMPLOYEE_ADD.name())     // EmployeeController POST must have AUTH_EMPLOYEE_ADD permission
-                    .antMatchers(HttpMethod.POST, "/logon").permitAll()                                                 // Permit logon url to everyone to pass credentials and get JWT token
-                    .antMatchers(HttpMethod.POST, "/logoff").permitAll()                                                 // Permit logon url to everyone to pass credentials and get JWT token
-                    .requestMatchers(PROTECTED_URLS)                                                                               // These are urls protected by JWTAuthorizationFilter
+                    .antMatchers(HttpMethod.POST, "/logon").permitAll()                                                     // Permit logon url to everyone to pass credentials and get JWT token
+                    .antMatchers(HttpMethod.POST, "/logoff").permitAll()                                                    // Permit logoff url to everyone (valid only for logged users)
+                    .requestMatchers(PROTECTED_URLS)                                                                                   // These are urls protected by JWTAuthorizationFilter
                     .authenticated()
                     .and()
                     // This configuration disable all other default configurations
