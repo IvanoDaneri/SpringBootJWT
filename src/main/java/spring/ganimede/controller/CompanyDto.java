@@ -3,6 +3,7 @@ package spring.ganimede.controller;
 import spring.ganimede.entity.CompanyType;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -16,9 +17,9 @@ import java.util.Date;
 public class CompanyDto implements Serializable
 {
     private Long id;
-    @NotEmpty
+    @NotBlank // more than @NotEmpty -> verify also blank string
     private String name;
-    @NotEmpty
+    @NotBlank // more than @NotEmpty -> verify also blank string
     @EqualsAndHashCode.Include
     private String code;
     private String address;

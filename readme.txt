@@ -1,26 +1,85 @@
-----------------------------
-SPRING-BOOT-REST-JWT APP 1.0
-----------------------------
+-----------------------------------
+----------------------------------
+SpringBootJwt 1.0
+
+Arguments:
+    - Spring boot application fundamentals
+    - Entity persistence
+    - Rest controller
+    - JWT Security
+----------------------------------
+----------------------------------
 
 ----------------------------------
 I) GENERAL APPLICATION DESCRIPTION
 ----------------------------------
 
-Educational application in SpringBoot that exposes http rest GET and POST with two different SpringSecurity configurations that we will see later.
+----------------------------------
+FUNDAMENTALS
+----------------------------------
+
+Spring Boot is an open source framework that makes it easy to create stand-alone, production-grade Spring based Applications that you can "just run".
+Spring Boot simplifies development and configuration of Spring application to create microservices and Web applications.
+Any Spring Boot application has an application class annotated with @SpringBootApplication and a main method, for example in SpringBootJWT
+here it is our application class:
+
+@SpringBootApplication
+public class SpringBootApp extends SpringBootServletInitializer
+{
+	private final AppLogger logger = AppLoggerService.getLogger( this.getClass().getName() );
+
+	public static void main(String[] args)
+	{
+		SpringApplication.run( SpringBootApp.class, args );
+	}	/* main */
+
+    ...
+}
+
+@SpringBootApplication is a convenience annotation that adds all of the following:
+
+    - @Configuration: Tags the class as a source of bean definitions for the application context.
+    - @EnableAutoConfiguration: Tells Spring Boot to start adding beans based on classpath settings,
+      other beans, and various property settings. For example, if spring-webmvc is on the classpath, this annotation flags the application
+      as a web application and activates key behaviors, such as setting up a DispatcherServlet.
+    - @ComponentScan: Tells Spring to look for other components, configurations, and services in the com/example package, letting it find the controllers.
+
+The main() method uses Spring Boot’s SpringApplication.run() method to launch an application.
+Did you notice that there was not a single line of XML? There is no web.xml file, either.
+This web application is 100% pure Java and you did not have to deal with configuring any plumbing or infrastructure.
+The only configuration file is "application.properties" where we can specify:
+    - application name
+    - context path
+    - server port
+
+ The Spring Boot application will be available at the address:
+
+    http://localhost:<server por>/<context path>
+
+In order to create a deployable war file from Spring Boot application it's necessary to update your application’s main class to extend SpringBootServletInitializer
+and override its configure method. This makes use of Spring Framework’s Servlet 3.0 support and allows you to configure your application when it’s launched
+by the servlet container (for example Tomcat, Glassfish or JBoss).
+
+
+----------------------------------
+REST SERVICES
+----------------------------------
+
+SpringBootJWT exposes http rest GET and POST with two different SpringSecurity configurations that we will see later.
 The application exposes two rest controllers that manage the CRUD of companies and employees entities (CompanyController, EmployeeController).
 The backend app saves entities on a database, in our case OracleXE.
 Db creation scripts and initial data population scripts are present for two different db users, test user and production user
-(the junit tests have property files that map  test user).
+(the junit tests have property files that map test user).
 
 In the SpringBoot application:
 
-- the Cross-Origin Resource Sharing service has been disabled because it would have blocked POST type HTTP requests
+- the Cross-Origin Resource Sharing (CORS) service has been disabled because it would have blocked POST type HTTP requests
 
 - DTO validation on POST-type rests has been added, i.e.:
     - @NotEmpty and @NotNull annotations on the CompanyDto and EmployeeDto class fields
     - @Valid annotation on the rest method parameter
 
-- we define ControllerAdvice that manage a series of exceptions thrown by the rest Controllers and
+- we annotate some classes with @ControllerAdvice. These classes manage a series of exceptions thrown by the rest Controllers and
   which will be re-thrown to the rest client (classes: ControllerNotFoundAdvice, UserControllerAdvice)
 
 Some rest url examples:
@@ -30,6 +89,11 @@ Some rest url examples:
 - curl to request all employee record: curl http://localhost:8092/springBootRest/employees
 - curl to request employee records with id=2: curl http://localhost:8092/springBootRest/employees/2
 
+
+----------------------------------
+APPLICATION TESTING
+----------------------------------
+
 Regarding Junit test of rest services (get and post):
 
 - a specific SoapUI project has been released: springBootRestClient-soapui-project.xml
@@ -37,7 +101,7 @@ Regarding Junit test of rest services (get and post):
     - protected rests can be called using JWT token get from Logon
 
 - Test java classes have been written for controllers (CompanyController, EmployeeController). Test classes performs CRUD entities by means of rest calls.
-  CompanyControllerTest and EmployeeControllerTest inherits from Logon class that call rest logon in startup and save JWT session token.
+  CompanyControllerTest and EmployeeControllerTest inherits from Logon class that calls rest logon during startup and save JWT session token.
   CompanyControllerTest and EmployeeControllerTest set JWT session token in header of http request for rest calls.
 
 - on controller tests the annotation used was:
@@ -45,8 +109,8 @@ Regarding Junit test of rest services (get and post):
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = {SpringBootApp.class})
 
    This annotation launches SpringBootApp including rest services on the port configured in the properties file
-   and therefore allows test class to invoke the rest services using the RestTemplate factory and the getForObject methods for rest GET
-   and postForObject for the rest POST (really in the case of JWT configuration the exchange method is used because we have to pass the request with
+   and therefore allows test classes to invoke the rest services using the RestTemplate factory and the getForObject methods for rest GET
+   and postForObject for the rest POST (really in case of JWT configuration the exchange method is used because we have to pass the request with
    a header containing JWT session token in "Authorization" property)
 
 Provisioning phase:
@@ -74,13 +138,12 @@ Two different SpringSecurity configurations have been implemented which are in a
 
 1) basic configuration: any user is authorized to access the URLs of the rest exposed by rest controllers (CompanyController, EmployeeController).
 2) JWT configuration: carries out Authentication and Authorization by implementing the OAuth 2.0 JWT (Json Web Token) standard which provides
-   a validity token with a fixed expiry time.
+   a valid session token with a fixed expiry time.
 
 Enable of security configuration 1 or 2 is operated by the jwtSecurity property defined in the application properties (application.properties, property: spring.security.jwt).
-Validity token duration is fixed by the sessionDuration property defined in the application properties (application.properties, property: spring.security.jwt.session-duration).
+Valid session token duration is fixed by the sessionDuration property defined in the application properties (application.properties, property: spring.security.jwt.session-duration).
 
 Let's see the WebSecurityConfig SpringBoot configuration class:
-
 
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableWebSecurity
@@ -114,7 +177,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
                     .antMatchers(HttpMethod.POST,"/employees/**").hasAuthority(PermissionEnum.AUTH_EMPLOYEE_ADD.name())     // EmployeeController POST must have AUTH_EMPLOYEE_ADD permission
                     .antMatchers(HttpMethod.POST, "/logon").permitAll()                                                 // Permit logon url to everyone to pass credentials and get JWT token
                     .antMatchers(HttpMethod.POST, "/logoff").permitAll()                                                 // Permit logon url to everyone to pass credentials and get JWT token
-                    .requestMatchers(PROTECTED_URLS)                                                                               // These are urls protected by JWTAuthorizationFilter
+                    .requestMatchers(PROTECTED_URLS)                                                                            // These are urls protected by JWTAuthorizationFilter
                     .authenticated()
                     .and()
                     // This configuration disable all other default configurations
@@ -187,7 +250,7 @@ Another interesting article on JSON Web Token:
 https://sopheamak.medium.com/springboot-how-to-invalidate-jwt-token-such-as-logout-or-reset-all-active-tokens-73f55289d47b
 
 3) WebSecurityConfig must enable CORS. Why?
-Because to make @CrossOrigin annotation work at controller level (classes annotated with @RestController), we need to explicitly enable CORS support at Spring Security level,
+To make @CrossOrigin annotation work at controller level (classes annotated with @RestController) we need to explicitly enable CORS support at Spring Security level,
 otherwise requests may be blocked by Spring Security (CORS violation) before reaching Spring MVC.
 In addition, WebSecurityConfig disable CSRF for POST rest, otherwise client receive 403 error (access to resource forbidden) (1)
 Here's our code:
