@@ -3,7 +3,7 @@
 SpringBootJwt 1.0
 
 Arguments:
-    - Spring boot application fundamentals
+    - SpringBoot fundamentals
     - Entity persistence
     - Rest controller
     - JWT Security
@@ -15,12 +15,12 @@ I) GENERAL APPLICATION DESCRIPTION
 ----------------------------------
 
 ----------------------------------
-FUNDAMENTALS
+SPRINGBOOT FUNDAMENTALS
 ----------------------------------
 
-Spring Boot is an open source framework that makes it easy to create stand-alone, production-grade Spring based Applications that you can "just run".
-Spring Boot simplifies development and configuration of Spring application to create microservices and Web applications.
-Any Spring Boot application has an application class annotated with @SpringBootApplication and a main method, for example in SpringBootJWT
+SpringBoot is an open source framework that makes it easy to create stand-alone, production-grade Spring based Applications that you can "just run".
+SpringBoot simplifies development and configuration of Spring application to create microservices and Web applications.
+Any SpringBoot application has an application class annotated with @SpringBootApplication and a main method, for example in SpringBootJWT
 here it is our application class:
 
 @SpringBootApplication
@@ -36,9 +36,9 @@ public class SpringBootApp extends SpringBootServletInitializer
     ...
 }
 
-@SpringBootApplication is a convenience annotation that adds all of the following:
+@SpringBootApplication is a convenience annotation that adds some important features and enables the following annotations:
 
-    - @Configuration: Tags the class as a source of bean definitions for the application context.
+    - @Configuration: Tags the class as a source of bean definitions for the application context (in our case class WebSecurityConfig).
     - @EnableAutoConfiguration: Tells Spring Boot to start adding beans based on classpath settings,
       other beans, and various property settings. For example, if spring-webmvc is on the classpath, this annotation flags the application
       as a web application and activates key behaviors, such as setting up a DispatcherServlet.
@@ -54,7 +54,7 @@ The only configuration file is "application.properties" where we can specify:
 
  The Spring Boot application will be available at the address:
 
-    http://localhost:<server por>/<context path>
+    http://localhost:<server port>/<context path>
 
 In order to create a deployable war file from Spring Boot application it's necessary to update your application’s main class to extend SpringBootServletInitializer
 and override its configure method. This makes use of Spring Framework’s Servlet 3.0 support and allows you to configure your application when it’s launched
@@ -258,7 +258,7 @@ Here's our code:
         // This configuration enable CORS and disable CSRF for POST rest
         http.cors()
                 .and()
-                .csrf().ignoringAntMatchers("/logon", "/companies/addCompany", "/employees/addEmployee");
+                .csrf().ignoringAntMatchers("/logon", "/logoff", "/companies/addCompany", "/employees/addEmployee");
 
 Remember that CORS must be enabled and configured server side as we do in our SpringBootJWT application.
 In our example allow http CORS request from any origin.
@@ -275,7 +275,7 @@ CSRF (Cross-Site Request Forgery):
 Purpose: CSRF is an attack where an attacker tricks a user into performing an action on a website without their knowledge or consent.
 Scenario: Imagine you’re logged into your online banking application. An attacker sends you a malicious link that, when clicked, initiates a money transfer from your account to theirs.
 Implementation: CSRF attacks exploit the user’s existing session (usually via cookies). The attacker crafts a request (e.g., a money transfer) and tricks the user into executing it.
-Security Benefit: To defend against CSRF, servers can use techniques like token-based protection (e.g., including a CSRF token in forms) or the “cookie-to-header” pattern.
+Security Benefit: To defend against CSRF, servers can use techniques like token-based protection (e.g., including a CSRF token in forms) or the “cookie-to-header” pattern (2).
 
 In summary:
 
@@ -293,7 +293,10 @@ If the CSRF token is missing from the request header in PUT, POST, DELETE reques
 This behavior isn’t specific to any server environment, including localhost, staging, or production.
 However, it’s important to note that disabling CSRF protection isn’t generally recommended in an application in production.
 CSRF protection is a crucial security measure to prevent Cross-Site Forgery attacks.
-Therefore, it’s advisable to include the CSRF token in the request header of state-changing operations.
+Therefore, it’s advisable to include the CSRF token in the request header of state-changing operations (3).
+
+(2) (3) In our case we disable CORS for application POST requests but, in this case, we use a JWT token to protect from Cross-Site Forgery attacks
+(any POST requests must contain a valid JWT token in http request header).
 
 -------------------------
 III) DOCKER CONFIGURATION

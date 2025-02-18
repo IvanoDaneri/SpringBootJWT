@@ -32,7 +32,7 @@ public class UserController
     UserRepository userRepository;
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "http://localhost:4200") // CORS enabled for origin: http://localhost:4200
     @RequestMapping(value="/logon", method = RequestMethod.POST, consumes = "application/json")
     public SessionDto logon(@Valid @RequestBody CredentialsDto credentials)
     {
@@ -46,7 +46,7 @@ public class UserController
         return new SessionDto(user.getName(), role.getName(), token);
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "http://localhost:4200") // CORS enabled for origin: http://localhost:4200
     @RequestMapping(value="/logoff", method = RequestMethod.POST, consumes = "application/json")
     public void logoff(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationProp)
     {

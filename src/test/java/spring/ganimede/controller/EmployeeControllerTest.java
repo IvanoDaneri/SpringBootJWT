@@ -212,7 +212,6 @@ public class EmployeeControllerTest extends Logon
             // Set JWT token in Authorization property of request header
             if(jwtSecurity)
             {
-                headers.setContentType(MediaType.APPLICATION_JSON);
                 headers.add(AUTHORIZATION_PROPERTY, token);
             }
 
