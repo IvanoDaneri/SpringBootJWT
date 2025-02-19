@@ -43,6 +43,8 @@ public class CompanyController
         return companyService.findByCode(code);
     }
 
+    // CORS enabled for origin: http://localhost:4200
+    // It means that we allow only http://localhost:4200 to send cross-origin requests
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value="/companies/addCompany", method = RequestMethod.POST, consumes = "application/json")
     public CompanyDto addCompany(@Valid @RequestBody CompanyDto companyDto)

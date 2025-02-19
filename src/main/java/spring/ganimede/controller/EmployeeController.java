@@ -62,6 +62,8 @@ public class EmployeeController
         return employeeService.findByRole(role);
     }
 
+    // CORS enabled for origin: http://localhost:4200
+    // It means that we allow only http://localhost:4200 to send cross-origin requests
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value="/employees/addEmployee", method = RequestMethod.POST, consumes = "application/json")
     public EmployeeDto addEmployee(@Valid @RequestBody EmployeeDto employeeDto)
