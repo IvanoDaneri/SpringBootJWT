@@ -249,6 +249,11 @@ Another interesting article on JSON Web Token:
 
 https://sopheamak.medium.com/springboot-how-to-invalidate-jwt-token-such-as-logout-or-reset-all-active-tokens-73f55289d47b
 
+Generale articles on OAuth 2.0:
+
+https://www.cybersecurity360.it/soluzioni-aziendali/oauth-2-0-cose-e-come-funziona-lo-standard-aperto-per-lautenticazione-sicura-online/
+https://www.teranet.it/introduzione-ad-oauth-2
+
 3) WebSecurityConfig must enable CORS. Why?
 To make @CrossOrigin annotation work at controller level (classes annotated with @RestController) we need to explicitly enable CORS support at Spring Security level,
 otherwise requests may be blocked by Spring Security (CORS violation) before reaching Spring MVC.
