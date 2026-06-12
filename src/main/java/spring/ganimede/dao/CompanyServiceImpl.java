@@ -26,7 +26,9 @@ public class CompanyServiceImpl implements CompanyService
     {
         List<CompanyDto> companyDtos = new ArrayList<>();
         List<Company> companies = companyRepository.findAll();
-        companies.forEach(company -> companyDtos.add(convertToDto(company)));
+        companies.forEach(company ->
+                companyDtos.add(convertToDto(company))
+        );
         return companyDtos;
     }
 

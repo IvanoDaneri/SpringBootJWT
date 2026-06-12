@@ -34,6 +34,7 @@ public class EmployeeControllerTest extends Logon
     private static String URL_REST_ADD_EMPLOYEE = "http://localhost:8094/springBootRest/employees/addEmployee";
 
     private Gson gson = new Gson();
+    private EmployeeDto employeeDtoResult;
 
 
     @Test

@@ -9,6 +9,7 @@ import spring.ganimede.security.entity.Permission;
 import spring.ganimede.security.entity.Role;
 import spring.ganimede.security.entity.User;
 
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -57,8 +58,16 @@ public class UserServiceImpl implements UserService
             throw new InvalidUserException(userName);
 
         User user = users.stream().findFirst().get();
+        if(user.isUserBlocked())
+            throw new BlockedUserException(userName);
+
         if(!user.getPassword().equals(password))
-            throw new InvalidPasswordException(password);
+            throw new InvalidPasswordException(user.getName());
+
+        // Convert the legacy Date object to a modern Instant
+        Instant expirationInstant = user.getPasswordExpiration().toInstant();
+        if(expirationInstant.isBefore(Instant.now()))
+            throw new ExpiredPasswordException(user.getName());
 
         List<String> permissioList = new ArrayList<>();
         Set<Role> roles = user.getRoles();
