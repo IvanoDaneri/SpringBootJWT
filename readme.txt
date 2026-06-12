@@ -60,7 +60,6 @@ In order to create a deployable war file from Spring Boot application it's neces
 and override its configure method. This makes use of Spring Framework’s Servlet 3.0 support and allows you to configure your application when it’s launched
 by the servlet container (for example Tomcat, Glassfish or JBoss).
 
-
 ----------------------------------
 REST SERVICES
 ----------------------------------
