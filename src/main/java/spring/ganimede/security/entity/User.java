@@ -62,7 +62,7 @@ public class User
     {
         try
         {
-            return NewEncryptorProvider.getInstance().unmarshal(password);
+            return EncryptorProvider.getInstance().unmarshal(password);
         }
         catch (Exception e)
         {
@@ -74,7 +74,7 @@ public class User
     {
         try
         {
-            this.password = NewEncryptorProvider.getInstance().marshal(password);
+            this.password = EncryptorProvider.getInstance().marshal(password);
         }
         catch (Exception e)
         {

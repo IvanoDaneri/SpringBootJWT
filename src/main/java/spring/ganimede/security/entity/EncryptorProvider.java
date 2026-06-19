@@ -2,26 +2,25 @@ package spring.ganimede.security.entity;
 
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.jasypt.properties.PropertyValueEncryptionUtils;
 
-public class NewEncryptorProvider
+public class EncryptorProvider
 {
     private static final String PBE_PASSWORD = "Seed23467.";
 
     private final PBEStringEncryptor encryptor;
-    private static NewEncryptorProvider encryptorProvider;
+    private static EncryptorProvider encryptorProvider;
 
-    public NewEncryptorProvider()
+    public EncryptorProvider()
     {
         encryptor = new StandardPBEStringEncryptor();
         encryptor.setPassword(PBE_PASSWORD);
     }
 
-    public static synchronized NewEncryptorProvider getInstance()
+    public static synchronized EncryptorProvider getInstance()
     {
         if(encryptorProvider == null)
         {
-            encryptorProvider = new NewEncryptorProvider();
+            encryptorProvider = new EncryptorProvider();
         }
 
         return encryptorProvider;
