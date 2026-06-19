@@ -4,24 +4,24 @@ import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.properties.PropertyValueEncryptionUtils;
 
-public class EncryptorProvider
+public class OldEncryptorProvider
 {
     private static final String PBE_PASSWORD = "Seed23467.";
 
     private PBEStringEncryptor encryptor;
-    private static EncryptorProvider encryptorProvider;
+    private static OldEncryptorProvider encryptorProvider;
 
-    public EncryptorProvider()
+    public OldEncryptorProvider()
     {
         encryptor = new StandardPBEStringEncryptor();
         encryptor.setPassword(PBE_PASSWORD);
     }
 
-    public static synchronized EncryptorProvider getInstance()
+    public static synchronized OldEncryptorProvider getInstance()
     {
         if(encryptorProvider == null)
         {
-            encryptorProvider = new EncryptorProvider();
+            encryptorProvider = new OldEncryptorProvider();
         }
 
         return encryptorProvider;
