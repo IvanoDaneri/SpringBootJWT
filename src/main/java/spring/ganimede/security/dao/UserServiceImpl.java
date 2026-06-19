@@ -65,9 +65,12 @@ public class UserServiceImpl implements UserService
             throw new InvalidPasswordException(user.getName());
 
         // Convert the legacy Date object to a modern Instant
-        Instant expirationInstant = user.getPasswordExpiration().toInstant();
-        if(expirationInstant.isBefore(Instant.now()))
-            throw new ExpiredPasswordException(user.getName());
+        if(user.getPasswordExpiration() != null)
+        {
+            Instant expirationInstant = user.getPasswordExpiration().toInstant();
+            if(expirationInstant.isBefore(Instant.now()))
+                throw new ExpiredPasswordException(user.getName());
+        }
 
         List<String> permissioList = new ArrayList<>();
         Set<Role> roles = user.getRoles();

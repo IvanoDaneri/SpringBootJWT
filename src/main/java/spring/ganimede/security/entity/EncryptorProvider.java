@@ -17,7 +17,7 @@ public class EncryptorProvider
         encryptor.setPassword(PBE_PASSWORD);
     }
 
-    public static EncryptorProvider getInstance()
+    public static synchronized EncryptorProvider getInstance()
     {
         if(encryptorProvider == null)
         {

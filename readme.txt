@@ -201,7 +201,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 1) Authentication phase.
 The configuration that implements JWT includes a logon rest url (UserController.logon) that implements the Authentication phase (class: UserController):
 
-- verify the credentials passed in http POST calling UserController.logon rest
+- verify the credentials passed in http POST calling UserController.logon rest (*)
 - retrieves the roles assigned to the user
 - retrieves permissions linked to roles
 - generates and returns back a validity token (JWT session token, which contains the encrypted permissions of the user's role) with a fixed expiration duration (as I said, read from the application properties file)
@@ -212,6 +212,8 @@ Bearer: eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJHYWxpbGVvSldUIiwic3ViIjoibXlBZG1pbiIsImF
 
 UserController provides also logoff method that adds jwt token in a black list (to avoid someone can use a valid token after the user
 has logged off to his application).
+
+(*) Remember that initial passwords saved on db are encrypted with Jasypt tool (by means of PBE_PASSWORD or ciphering password)
 
 2) Authorization phase.
 The Authorization phase is managed by the JWTAuthorizationFilter filter inserted in the filter chain which operates in the following way:

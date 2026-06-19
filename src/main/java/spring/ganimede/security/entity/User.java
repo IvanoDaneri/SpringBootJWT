@@ -33,7 +33,7 @@ public class User
     private String password;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "password_expiration", nullable = false)
+    @Column(name = "password_expiration")
     private Date passwordExpiration;
 
     @ColumnDefault("'N'")
@@ -62,7 +62,7 @@ public class User
     {
         try
         {
-            return EncryptorProvider.getInstance().unmarshal(password);
+            return NewEncryptorProvider.getInstance().unmarshal(password);
         }
         catch (Exception e)
         {
@@ -74,7 +74,7 @@ public class User
     {
         try
         {
-            this.password = EncryptorProvider.getInstance().marshal(password);
+            this.password = NewEncryptorProvider.getInstance().marshal(password);
         }
         catch (Exception e)
         {

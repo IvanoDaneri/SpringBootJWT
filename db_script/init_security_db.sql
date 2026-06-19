@@ -10,7 +10,7 @@ create table spring_db.users
              , USER_NAME              VARCHAR2(255 CHAR)              NOT NULL
              , NICK_NAME              VARCHAR2(255 CHAR)              NOT NULL
              , PASSWORD               VARCHAR2(255 CHAR)              NOT NULL
-             , PASSWORD_EXPIRATION    TIMESTAMP(6)                    NOT NULL
+             , PASSWORD_EXPIRATION    TIMESTAMP(6)
              , USER_BLOCKED           CHAR(1 CHAR) DEFAULT 'N'        NOT NULL
              , INSERT_DATE            TIMESTAMP(6)                    NOT NULL
              , UPDATE_DATE            TIMESTAMP(6)                    NOT NULL
