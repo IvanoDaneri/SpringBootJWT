@@ -204,13 +204,13 @@ The configuration that implements JWT includes a logon rest url (UserController.
 - verify the credentials passed in http POST calling UserController.logon rest (*)
 - retrieves the roles assigned to the user
 - retrieves permissions linked to roles
-- generates and returns back a validity token (JWT session token, which contains the encrypted permissions of the user's role) with a fixed expiration duration (as I said, read from the application properties file)
+- generates and returns back a validity token (JWT session token, which contains the encrypted permissions of the user's role) with a fixed expiration duration (red from the application properties file)
 
 The token must be passed in the header of http request for rest calls to the protected rest urls (CompanyController,  EmployeeController), creating "Authorization" property and set value of property with token.
 Example of token returned by logon method:
 Bearer: eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJHYWxpbGVvSldUIiwic3ViIjoibXlBZG1pbiIsImF1dGhvcml0aWVzIjpbeyJhdXRob3JpdHkiOiJBVVRIX0NPTVBBTllfQUREIn0seyJhdXRob3JpdHkiOiJBVVRIX0VNUExPWUVFX1JFQUQifSx7ImF1dGhvcml0eSI6IkFVVEhfQ09NUEFOWV9SRUFEIn0seyJhdXRob3JpdHkiOiJBVVRIX0VNUExPWUVFX0FERCJ9XSwiaWF0IjoxNzE5MjMxNDgxLCJleHAiOjE3MTkyMzIwODF9.Eo0wAQPqhi30uIo0Kzg50eCS8wWyEuSYtJPN03xgGSD-7aMsDaK3gDmEAqSEVurid1Xq8nYkiVasjeZuwT-WwQ
 
-UserController provides also logoff method that adds jwt token in a black list (to avoid someone can use a valid token after the user
+UserController provides also logoff method that adds jwt token in a black list (to avoid someone might use a valid token after the user
 has logged off to his application).
 
 (*) Remember that initial passwords saved on db are encrypted with Jasypt tool (by means of PBE_PASSWORD or ciphering password)
